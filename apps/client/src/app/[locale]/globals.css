@@ -1,0 +1,1167 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@source "../../../../../packages/sharedSections";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --primary-light: #151516;
+  --primary-dark: #a3c10b;
+
+  --bg: #ffffff;
+  --text: #000000;
+  --surface: #f8f8f8;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  /* --primary: oklch(81.818% 0.15214 98.596); */
+  --primary: var(--primary-light);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.961 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --bg: #000000;
+  --text: #ffffff;
+  --surface: #0f0f0f;
+
+  --background: oklch(0.145 0.006 285);
+  --foreground: oklch(0.985 0 0);
+
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+
+  --primary: var(--primary-dark);
+  --primary-foreground: oklch(0.145 0.006 285);
+
+  --secondary: oklch(0.178 0.012 285);
+  --secondary-foreground: oklch(0.985 0 0);
+
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --destructive: oklch(0.704 0.191 22.216);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-text: var(--text);
+  --color-surface: var(--surface);
+  --animate-fade-up: fade-up 0.8s ease-out both;
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-marquee: marquee 60s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* Apply defaults ONCE */
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Custom button */
+.basic-button {
+  padding: 6px 12px;
+  background-color: #ecec59;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.basic-button:hover {
+  opacity: 0.7;
+}
+
+/* Disabled button */
+button:disabled,
+button.disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
+
+@keyframes chat-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10% {
+    transform: translateX(-3px);
+  }
+
+  20% {
+    transform: translateX(3px);
+  }
+
+  30% {
+    transform: translateX(-3px);
+  }
+
+  40% {
+    transform: translateX(3px);
+  }
+
+  50% {
+    transform: translateX(0);
+  }
+}
+
+.animate-chat-shake {
+  animation: chat-shake 0.6s ease-in-out infinite;
+}
+
+/* ========================================
+   Hero Particle / Constellation Background
+   ======================================== */
+
+.hero-background {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background:
+    /* subtle lime glow */
+    radial-gradient(
+      circle at 65% 35%,
+      oklch(0.9 0.25 105 / 0.1) 0%,
+      transparent 22%
+    ),
+    /* soft gray glow */
+    radial-gradient(circle at 75% 55%, oklch(0.5 0 0 / 0.1) 0%, transparent 35%),
+    /* white base */ oklch(0.99 0 0);
+}
+
+/* Large soft atmospheric glow */
+.hero-background::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+
+  z-index: -1;
+
+  background:
+    radial-gradient(circle at 35% 45%, oklch(0.95 0 0 / 0.8), transparent 30%),
+    radial-gradient(circle at 75% 45%, oklch(0.75 0 0 / 0.12), transparent 30%);
+
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+/* Particle layer */
+.hero-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+
+  background-image:
+    /* tiny particles */
+    radial-gradient(
+      circle at 8% 20%,
+      oklch(0.35 0 0 / 0.45) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 18% 72%,
+      oklch(0.35 0 0 / 0.35) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 27% 12%,
+      oklch(0.35 0 0 / 0.4) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 43% 30%,
+      oklch(0.35 0 0 / 0.3) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 52% 82%,
+      oklch(0.35 0 0 / 0.35) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 68% 18%,
+      oklch(0.35 0 0 / 0.4) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 83% 30%,
+      oklch(0.35 0 0 / 0.35) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 93% 65%,
+      oklch(0.35 0 0 / 0.4) 0 1px,
+      transparent 2px
+    ),
+    /* lime glowing particles */
+    radial-gradient(
+        circle at 19% 14%,
+        oklch(0.9 0.3 105 / 0.9) 0 3px,
+        oklch(0.9 0.3 105 / 0.25) 4px,
+        transparent 10px
+      ),
+    radial-gradient(
+      circle at 62% 16%,
+      oklch(0.9 0.3 105 / 0.9) 0 3px,
+      oklch(0.9 0.3 105 / 0.25) 4px,
+      transparent 10px
+    ),
+    radial-gradient(
+      circle at 88% 55%,
+      oklch(0.9 0.3 105 / 0.9) 0 3px,
+      oklch(0.9 0.3 105 / 0.25) 4px,
+      transparent 10px
+    ),
+    radial-gradient(
+      circle at 46% 72%,
+      oklch(0.9 0.3 105 / 0.7) 0 2px,
+      transparent 8px
+    );
+
+  pointer-events: none;
+}
+
+.hero-constellation {
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+
+  opacity: 0.45;
+
+  background-image:
+    linear-gradient(
+      28deg,
+      transparent 48%,
+      oklch(0.5 0 0 / 0.12) 49%,
+      transparent 50%
+    ),
+    linear-gradient(
+      145deg,
+      transparent 48%,
+      oklch(0.5 0 0 / 0.1) 49%,
+      transparent 50%
+    ),
+    linear-gradient(
+      70deg,
+      transparent 48%,
+      oklch(0.5 0 0 / 0.08) 49%,
+      transparent 50%
+    );
+
+  background-size:
+    320px 220px,
+    420px 280px,
+    500px 350px;
+
+  pointer-events: none;
+}
+
+.hero-background::after {
+  animation: hero-particles 8s ease-in-out infinite alternate;
+}
+
+@keyframes hero-particles {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.75;
+  }
+
+  50% {
+    transform: translate3d(0, -4px, 0);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translate3d(2px, 3px, 0);
+    opacity: 0.75;
+  }
+}
+
+/* =========================================
+   PARTICLES
+   ========================================= */
+
+/* =========================================================
+   GLOBAL ECOMMERCE BACKGROUND
+   ========================================================= */
+
+.particle-background {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  /* IMPORTANT: don't use z-index: -1 */
+  z-index: 0;
+
+  background:
+    radial-gradient(
+      circle at 8% 25%,
+      color-mix(in srgb, var(--primary) 8%, transparent),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 92% 35%,
+      color-mix(in srgb, var(--primary) 7%, transparent),
+      transparent 32%
+    ),
+    var(--background);
+}
+
+/* =========================================================
+   PARTICLE FIELD
+   ========================================================= */
+
+.particle-background::before {
+  content: "";
+  z-index: -1;
+
+  position: absolute;
+  inset: -100px;
+
+  background-image:
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--primary) 35%, transparent) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--primary) 20%, transparent) 0 1px,
+      transparent 1.5px
+    );
+
+  background-size:
+    70px 70px,
+    120px 120px;
+
+  background-position:
+    0 0,
+    40px 60px;
+
+  opacity: 0.45;
+
+  animation: ecommerce-particles 35s linear infinite;
+}
+
+/* =========================================================
+   COLOR / LIGHT EFFECT
+   ========================================================= */
+
+.particle-background::after {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+  inset: -20%;
+
+  background:
+    radial-gradient(
+      circle at 15% 30%,
+      color-mix(in srgb, var(--primary) 13%, transparent),
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 85% 35%,
+      color-mix(in srgb, var(--primary) 11%, transparent),
+      transparent 23%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      color-mix(in srgb, var(--primary) 8%, transparent),
+      transparent 28%
+    );
+
+  filter: blur(70px);
+
+  opacity: 0.8;
+
+  animation: ecommerce-glow 18s ease-in-out infinite alternate;
+}
+
+/* =========================================================
+   PARTICLE ANIMATION
+   ========================================================= */
+
+@keyframes ecommerce-particles {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(30px, -20px, 0);
+  }
+
+  100% {
+    transform: translate3d(70px, 60px, 0);
+  }
+}
+
+/* =========================================================
+   GLOW ANIMATION
+   ========================================================= */
+
+@keyframes ecommerce-glow {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: scale(1.08) translate3d(30px, -20px, 0);
+  }
+
+  100% {
+    transform: scale(1.03) translate3d(-20px, 30px, 0);
+  }
+}
+
+/* =========================================================
+   FLOATING GLOW ORBS
+   ========================================================= */
+
+.background-orb {
+  position: absolute;
+
+  border-radius: 9999px;
+
+  pointer-events: none;
+
+  filter: blur(100px);
+
+  opacity: 0.14;
+
+  animation: ecommerce-orb 14s ease-in-out infinite alternate;
+}
+
+.orb-1 {
+  width: 420px;
+  height: 420px;
+
+  left: -180px;
+  top: 20%;
+
+  background: var(--primary);
+
+  box-shadow: 0 0 120px color-mix(in srgb, var(--primary) 50%, transparent);
+}
+
+.orb-2 {
+  width: 360px;
+  height: 360px;
+
+  right: -160px;
+  top: 40%;
+
+  background: var(--primary);
+
+  box-shadow: 0 0 120px color-mix(in srgb, var(--primary) 45%, transparent);
+
+  animation-delay: -5s;
+}
+
+.orb-3 {
+  width: 280px;
+  height: 280px;
+
+  left: 45%;
+  bottom: -180px;
+
+  background: var(--primary);
+
+  opacity: 0.08;
+
+  animation-delay: -8s;
+}
+
+@keyframes ecommerce-orb {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(35px, -25px, 0) scale(1.12);
+  }
+}
+.main-content {
+  position: relative;
+
+  background: color-mix(in srgb, var(--background) 82%, transparent);
+
+  box-shadow: 0 20px 80px color-mix(in srgb, var(--foreground) 5%, transparent);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+/* =========================================================
+   GALAL STORE INTRO
+========================================================= */
+
+.galal-intro {
+  --intro-bg: #090909;
+  --intro-accent: var(--primary);
+  --intro-accent-secondary: var(--primary-dark);
+
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--intro-bg);
+
+  color: white;
+
+  isolation: isolate;
+
+  animation: galalIntroAppear 0.8s ease both;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.galal-intro__grid {
+  position: absolute;
+  inset: 0;
+
+  opacity: 0.15;
+
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+
+  background-size: 70px 70px;
+
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 30%,
+    black 70%,
+    transparent
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   GLOW
+========================================================= */
+
+.galal-intro__glow {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  border-radius: 999px;
+
+  filter: blur(100px);
+
+  opacity: 0.18;
+
+  pointer-events: none;
+}
+
+.galal-intro__glow--one {
+  top: -250px;
+  right: -150px;
+
+  background: var(--intro-accent);
+}
+
+.galal-intro__glow--two {
+  bottom: -300px;
+  left: -150px;
+
+  background: var(--intro-accent-secondary);
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.galal-intro__content {
+  position: relative;
+  z-index: 5;
+
+  width: min(520px, 90vw);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  animation: galalContentIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* =========================================================
+   SNEAKER
+========================================================= */
+
+.galal-intro__sneaker {
+  position: absolute;
+
+  width: min(600px, 100vw);
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  color: rgba(255, 255, 255, 0.025);
+
+  pointer-events: none;
+
+  animation:
+    sneakerReveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) both,
+    sneakerFloat 5s ease-in-out 1.8s infinite;
+}
+
+.galal-intro__sneaker-svg {
+  width: 100%;
+  height: auto;
+
+  filter: drop-shadow(
+    0 0 30px color-mix(in srgb, var(--intro-accent) 15%, transparent)
+  );
+}
+
+.galal-intro__sneaker-shadow {
+  position: absolute;
+
+  left: 15%;
+  right: 15%;
+  bottom: 8%;
+
+  height: 30px;
+
+  border-radius: 50%;
+
+  background: var(--intro-accent);
+
+  opacity: 0.12;
+
+  filter: blur(30px);
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.galal-intro__logo {
+  position: relative;
+  z-index: 10;
+
+  margin-bottom: 28px;
+
+  animation: logoReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.galal-intro__logo-image {
+  width: min(220px, 55vw);
+  height: auto;
+
+  object-fit: contain;
+
+  filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5));
+}
+
+.galal-intro__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
+.galal-intro__brand span {
+  font-size: clamp(2rem, 7vw, 4rem);
+  line-height: 0.9;
+}
+
+.galal-intro__brand small {
+  margin-top: 8px;
+
+  font-size: 0.65rem;
+  letter-spacing: 0.5em;
+
+  color: var(--intro-accent);
+}
+
+/* =========================================================
+   TAGLINE
+========================================================= */
+
+.galal-intro__tagline {
+  position: relative;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 70px;
+
+  animation: taglineReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+.galal-intro__tagline span {
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  letter-spacing: 0.45em;
+
+  opacity: 0.5;
+}
+
+.galal-intro__tagline strong {
+  margin-top: 5px;
+
+  font-size: clamp(1.3rem, 4vw, 2rem);
+
+  font-weight: 800;
+
+  letter-spacing: 0.18em;
+
+  background: linear-gradient(90deg, white, var(--intro-accent), white);
+
+  background-size: 200% auto;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+
+  animation: accentShimmer 3s linear infinite;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.galal-intro__loading {
+  position: relative;
+  z-index: 10;
+
+  width: min(360px, 80vw);
+
+  animation: loadingReveal 1s ease 0.7s both;
+}
+
+.galal-intro__loading-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 10px;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.2em;
+
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.galal-intro__percentage {
+  color: white;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.galal-intro__progress {
+  width: 100%;
+  height: 2px;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.galal-intro__progress-bar {
+  width: 100%;
+  height: 100%;
+
+  transform-origin: left center;
+
+  background: linear-gradient(
+    90deg,
+    var(--intro-accent-secondary),
+    var(--intro-accent)
+  );
+
+  box-shadow: 0 0 15px color-mix(in srgb, var(--intro-accent) 50%, transparent);
+
+  transition: transform 80ms linear;
+}
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.galal-intro__bottom {
+  position: absolute;
+
+  left: 32px;
+  right: 32px;
+  bottom: 25px;
+
+  z-index: 10;
+
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 8px;
+
+  letter-spacing: 0.25em;
+
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================================
+   CURTAINS
+========================================================= */
+
+.galal-intro__curtain {
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+
+  width: 50%;
+
+  z-index: 20;
+
+  background: #080808;
+
+  transition: transform 1.15s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.galal-intro__curtain--left {
+  left: 0;
+
+  transform-origin: left center;
+}
+
+.galal-intro__curtain--right {
+  right: 0;
+
+  transform-origin: right center;
+}
+
+/* =========================================================
+   EXIT
+========================================================= */
+
+.galal-intro--exit .galal-intro__curtain--left {
+  transform: translateX(-100%);
+}
+
+.galal-intro--exit .galal-intro__curtain--right {
+  transform: translateX(100%);
+}
+
+.galal-intro--exit .galal-intro__content {
+  transform: translateY(-80px) scale(0.94);
+  opacity: 0;
+
+  transition:
+    transform 0.8s cubic-bezier(0.76, 0, 0.24, 1),
+    opacity 0.5s ease;
+}
+
+.galal-intro--exit .galal-intro__grid,
+.galal-intro--exit .galal-intro__glow,
+.galal-intro--exit .galal-intro__bottom {
+  opacity: 0;
+
+  transition: opacity 0.5s ease;
+}
+
+/* =========================================================
+   KEYFRAMES
+========================================================= */
+
+@keyframes galalIntroAppear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes galalContentIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes logoReveal {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.85);
+    filter: blur(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes sneakerReveal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.75) rotate(-5deg);
+    filter: blur(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes sneakerFloat {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+
+  50% {
+    margin-top: -12px;
+  }
+}
+
+@keyframes taglineReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes loadingReveal {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes accentShimmer {
+  0% {
+    background-position: 200% center;
+  }
+
+  100% {
+    background-position: -200% center;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 640px) {
+  .galal-intro__sneaker {
+    width: 130vw;
+  }
+
+  .galal-intro__tagline {
+    margin-bottom: 55px;
+  }
+
+  .galal-intro__bottom {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .galal-intro *,
+  .galal-intro {
+    animation: none !important;
+    transition: none !important;
+  }
+}

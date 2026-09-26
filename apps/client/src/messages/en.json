@@ -1,0 +1,65 @@
+{
+  "notFound": {
+    "title": "Not Found"
+  },
+  "HomePage": {
+    "title": "Welcome To Our Store",
+    "description": "Best products with best prices"
+  },
+  "Chat": {
+    "support": "Support Assistant",
+    "message": "Hello 👋 How can I help you today?",
+    "input": "Type your message...",
+    "button": "Send",
+    "active": "Active now",
+    "typing": "Typing..."
+  },
+  "Navbar": {
+    "home": "Home",
+    "products": "Products",
+    "menu": "Menu",
+    "cart": "Cart",
+    "logo": " Galal Store.",
+    "whishlist": "Wishlist.",
+    "profile": " Profile.",
+    "search": "Search..."
+  },
+  "Buttons": {
+    "addToCart": "Add To Cart",
+    "contactByWhatsapp": "Contact via WhatsApp",
+    "buy": "Buy this Item",
+    "showAllProducts": " View all products",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
+  },
+  "labels": {
+    "email": "Email address",
+    "password": "Password",
+    "forgotPassword": "Forgot Password",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "confirmPassword": "Confirm Password",
+    "name": "Name",
+    "size": "Size",
+    "color": "Color",
+    "quantity": "Quantity",
+    "stock": "Stock",
+    "ProductDescription": "Product Description",
+    "Shipping": "Shipping & Returns",
+    "ShippingDescData": "Free shipping within 3–5 business days. Returns accepted within 14 days of delivery.",
+    "Materials": "Materials & Care",
+    "privacyDesc": "By clicking Pay Now, you agree to our Terms & Conditions and Privacy Policy. You authorize us to charge your selected payment method for the total amount shown. All sales are subject to our return and Refund Policies.",
+    "privacyDescData": "Premium materials designed for durability and comfort. Clean gently with a soft cloth."
+  },
+
+  "variant": {
+    "size": "size",
+    "color": "color"
+  }
+}

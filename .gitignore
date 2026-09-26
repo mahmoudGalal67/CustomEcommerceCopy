@@ -1,0 +1,50 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+
+# Vite
+dist/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Laravel
+apps/back/vendor/
+apps/back/storage/*.key
+apps/back/storage/logs/*
+apps/back/storage/framework/cache/*
+apps/back/storage/framework/sessions/*
+apps/back/storage/framework/views/*
+apps/back/bootstrap/cache/*
+
+# Laravel environment
+apps/back/.env
+
+# Docker
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.temp
+
+# Coverage
+coverage/
+
+# Testing
+.phpunit.result.cache

@@ -1,0 +1,25 @@
+{
+    "id": "1",
+    "title": "home",
+    "slug": "Home",
+    "sections": [
+        {
+            "id": "id1",
+            "type": "hero",
+            "props": {
+                "title": "Welcome",
+                "subtitle": "Click to edit",
+                "bg": "#0f172a"
+            }
+        },
+        {
+            "id": "FvwCJvh0UOgnd82LcwKpL",
+            "type": "hero",
+            "props": {
+                "title": "New Hero 2",
+                "subtitle": "test",
+                "bg": "#020617"
+            }
+        }
+    ]
+}
