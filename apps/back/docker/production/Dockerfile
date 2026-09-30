@@ -5,7 +5,6 @@ WORKDIR /var/www
 # System dependencies
 RUN apt-get update && apt-get install -y \
     nginx \
-    supervisor \
     git \
     curl \
     unzip \
@@ -32,10 +31,10 @@ RUN apt-get update && apt-get install -y \
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy Composer files first for Docker layer caching
+# Composer dependency files
 COPY composer.json composer.lock ./
 
-# Install production PHP dependencies
+# Production PHP dependencies
 RUN composer install \
     --no-dev \
     --no-interaction \
@@ -43,19 +42,20 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
-# Copy Laravel application
+# Laravel application
 COPY . .
 
-# Run Laravel Composer scripts now that application files exist
+# Generate optimized autoload files
 RUN composer dump-autoload --optimize \
     && php artisan package:discover --ansi
 
-# Laravel writable directories
-RUN mkdir -p storage/framework/cache \
-    storage/framework/sessions \
-    storage/framework/views \
-    storage/logs \
-    bootstrap/cache \
+# Writable Laravel directories
+RUN mkdir -p \
+        storage/framework/cache \
+        storage/framework/sessions \
+        storage/framework/views \
+        storage/logs \
+        bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
@@ -64,9 +64,11 @@ COPY docker/production/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Startup script
 COPY docker/production/start.sh /start.sh
-RUN chmod +x /start.sh
 
-# Render uses PORT, normally 10000
-EXPOSE 10000
+RUN chmod +x /start.sh \
+    && rm -f /etc/nginx/sites-enabled/default \
+    && rm -f /etc/nginx/conf.d/default.conf.bak
+
+EXPOSE 80
 
 CMD ["/start.sh"]
