@@ -14,7 +14,7 @@ import { useGetSettingsQuery } from "@/services/SettingsApi";
 
 function Login() {
   const router = useRouter();
-  const { login, isLoading, isError, error } = useLogin();
+  const { login, isLoading, isError, errorMessage } = useLogin();
   const params = useParams();
   const locale = (params.locale || "en") as string;
   const dict = useDictionary();
@@ -44,7 +44,11 @@ function Login() {
       <div className="sm:mx-auto sm:w-full sm:max-w-sm  ">
         <Link href="/" className="flex items-center justify-center">
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${settings?.logo}`}
+            src={
+              settings?.logo
+                ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${settings?.logo}`
+                : "/logo.png"
+            }
             alt={settings?.site_name || "Logo"}
             width={36}
             height={36}
@@ -127,9 +131,8 @@ function Login() {
           </div>
         </form>
         {isError && (
-          <p className="text-red-500 text-sm text-center my-2 ">
-            {error?.data?.message ||
-              "An error occurred during login. Please try again."}
+          <p className="text-red-500 text-sm text-center my-2">
+            {errorMessage}
           </p>
         )}
         <p className="mt-10 text-center text-sm/6 text-gray-500">

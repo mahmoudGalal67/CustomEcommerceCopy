@@ -87,13 +87,9 @@ export default function SettingsForm() {
     }
   }, [data, reset]);
 
-  // if (isLoading) {
-  //     return (
-  //         <div className="p-10">
-  //             Loading Settings...
-  //         </div>
-  //     );
-  // }
+  if (isLoading) {
+    return <div className="p-10">Loading Settings...</div>;
+  }
 
   const languages = watch("languages");
 
@@ -191,7 +187,12 @@ export default function SettingsForm() {
     return <p className="mt-1.5 text-sm text-destructive">{message}</p>;
   }
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit, (errors) => {
+        console.log("ZOD / FORM ERRORS:", errors);
+      })}
+      className="space-y-6"
+    >
       {serverMessage && (
         <div
           className={`rounded-lg border px-4 py-3 text-sm ${
@@ -254,52 +255,6 @@ export default function SettingsForm() {
                   setValue("show_privacy_page", value)
                 }
               />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Address Settings</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-5">
-            <div>
-              <Label className="mb-2">Default Shipping Address</Label>
-
-              <Input {...register("default_shipping_address")} />
-            </div>
-
-            <div>
-              <Label className="mb-2">Default Billing Address</Label>
-
-              <Input {...register("default_billing_address")} />
-            </div>
-
-            <div>
-              <Label className="mb-2">Address Label</Label>
-
-              <Select
-                value={watch("address_label")}
-                onValueChange={(value) =>
-                  setValue("address_label", value, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                    shouldTouch: true,
-                  })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="home">Home</SelectItem>
-
-                  <SelectItem value="work">Work</SelectItem>
-
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </CardContent>
         </Card>
@@ -382,105 +337,7 @@ export default function SettingsForm() {
             </div>
           </CardContent>
         </Card>
-        <div className="grid gap-6 xl:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Delivery Preferences</CardTitle>
-            </CardHeader>
 
-            <CardContent className="space-y-5">
-              <div>
-                <Label className="mb-2">Preferred Delivery Time</Label>
-
-                <Input
-                  {...register("preferred_delivery_time")}
-                  placeholder="10:00 AM - 02:00 PM"
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label className="mb-2">Leave At Door</Label>
-
-                <Switch
-                  checked={watch("leave_at_door")}
-                  onCheckedChange={(value) => setValue("leave_at_door", value)}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <Label className="mb-2">Signature Required</Label>
-
-                <Switch
-                  checked={watch("signature_required")}
-                  onCheckedChange={(value) =>
-                    setValue("signature_required", value)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-5">
-              <div>
-                <Label className="mb-2">Email</Label>
-
-                <Input {...register("contact_email")} />
-                {errors.contact_email && (
-                  <FieldError message={errors.contact_email?.message} />
-                )}
-              </div>
-
-              <div>
-                <Label className="mb-2">Phone</Label>
-
-                <Input {...register("contact_phone")} />
-                <FieldError message={errors.contact_phone?.message} />
-              </div>
-
-              <div>
-                <Label className="mb-2">Whatsapp</Label>
-
-                <Input {...register("contact_whatsapp")} />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="grid gap-6 xl:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Coupon Settings</CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <Input {...register("coupon_code")} placeholder="WELCOME10" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>SEO Settings</CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-5">
-              <Input {...register("seo_title")} placeholder="Meta Title" />
-              <FieldError message={errors.seo_title?.message} />
-              <Input
-                {...register("seo_description")}
-                placeholder="Meta Description"
-              />
-              <FieldError message={errors.seo_description?.message} />
-              <Input
-                {...register("seo_keywords")}
-                placeholder="keywords,separated,by,comma"
-              />
-              <FieldError message={errors.seo_keywords?.message} />
-            </CardContent>
-          </Card>
-        </div>
         <Card>
           <CardHeader>
             <CardTitle>Homepage Settings</CardTitle>

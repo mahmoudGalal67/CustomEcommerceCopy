@@ -14,95 +14,227 @@ class UpdateFeatureRequest extends FormRequest
         return true;
     }
 
-
+    /**
+     * Prepare the data for validation.
+     */
     protected function prepareForValidation(): void
     {
-        $this->merge([
-            'show_contact_page' =>
-                filter_var($this->show_contact_page, FILTER_VALIDATE_BOOLEAN),
+        $data = [
+            'show_contact_page' => filter_var(
+                $this->input('show_contact_page'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'show_about_page' =>
-                filter_var($this->show_about_page, FILTER_VALIDATE_BOOLEAN),
+            'show_about_page' => filter_var(
+                $this->input('show_about_page'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'show_terms_page' =>
-                filter_var($this->show_terms_page, FILTER_VALIDATE_BOOLEAN),
-            'show_privacy_page' =>
-                filter_var($this->show_privacy_page, FILTER_VALIDATE_BOOLEAN),
+            'show_terms_page' => filter_var(
+                $this->input('show_terms_page'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'email_notifications' =>
-                filter_var($this->email_notifications, FILTER_VALIDATE_BOOLEAN),
+            'show_privacy_page' => filter_var(
+                $this->input('show_privacy_page'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'leave_at_door' =>
-                filter_var($this->leave_at_door, FILTER_VALIDATE_BOOLEAN),
+            'email_notifications' => filter_var(
+                $this->input('email_notifications'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'signature_required' =>
-                filter_var($this->signature_required, FILTER_VALIDATE_BOOLEAN),
+            'leave_at_door' => filter_var(
+                $this->input('leave_at_door'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'show_featured_products' =>
-                filter_var($this->show_featured_products, FILTER_VALIDATE_BOOLEAN),
+            'signature_required' => filter_var(
+                $this->input('signature_required'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'show_best_sellers' =>
-                filter_var($this->show_best_sellers, FILTER_VALIDATE_BOOLEAN),
+            'show_featured_products' => filter_var(
+                $this->input('show_featured_products'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
 
-            'show_new_arrivals' =>
-                filter_var($this->show_new_arrivals, FILTER_VALIDATE_BOOLEAN),
+            'show_best_sellers' => filter_var(
+                $this->input('show_best_sellers'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
+
+            'show_new_arrivals' => filter_var(
+                $this->input('show_new_arrivals'),
+                FILTER_VALIDATE_BOOLEAN
+            ),
+
             'languages' => $this->input('languages', []),
 
-            'payment_methods' =>
-                json_decode($this->payment_methods ?? '[]', true),
-        ]);
-    }
+            'payment_methods' => json_decode(
+                $this->input('payment_methods', '[]'),
+                true
+            ),
+        ];
 
+        $this->merge($data);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Remove empty image values
+        |--------------------------------------------------------------------------
+        |
+        | FormData may send null as the string "null".
+        | We don't want Laravel to validate that as an image.
+        |
+        */
+
+        foreach ([
+            'background_image',
+            'store_logo',
+            'favicon',
+        ] as $field) {
+            $value = $this->input($field);
+
+            if (
+                $value === null ||
+                $value === '' ||
+                $value === 'null' ||
+                $value === 'undefined'
+            ) {
+                $this->request->remove($field);
+            }
+        }
+    }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'website_name' => ['nullable', 'string'],
+            'website_name' => [
+                'nullable',
+                'string',
+            ],
 
-            'show_contact_page' => ['boolean'],
-            'show_about_page' => ['boolean'],
-            'show_terms_page' => ['boolean'],
-            'show_privacy_page' => ['boolean'],
+            'show_contact_page' => [
+                'boolean',
+            ],
 
-            'languages' => ['nullable', 'array'],
-            'languages.*' => ['string'],
-            'currency' => ['string'],
-            'address_label' => ['string'],
-            'default_billing_address' => ['nullable','string'],
-            'default_shipping_address' => ['nullable','string'],
-            'seo_title' => ['string'],
-            'seo_description' => ['string'],
-            'seo_keywords' => ['string'],
-            'contact_whatsapp' => ['string'],
+            'show_about_page' => [
+                'boolean',
+            ],
 
-            'email_notifications' => ['boolean'],
+            'show_terms_page' => [
+                'boolean',
+            ],
 
-            'wishlist_public' => ['boolean'],
+            'show_privacy_page' => [
+                'boolean',
+            ],
 
-            'preferred_delivery_time' => ['nullable', 'string'],
-            'leave_at_door' => ['boolean'],
-            'signature_required' => ['boolean'],
+            'languages' => [
+                'nullable',
+                'array',
+            ],
 
-            'contact_email' => ['nullable', 'email'],
-            'contact_phone' => ['nullable', 'string'],
+            'languages.*' => [
+                'string',
+            ],
 
-            'coupon_code' => ['nullable', 'string'],
+            'currency' => [
+                'string',
+            ],
 
-            'footer_font_size' => ['integer'],
+            'address_label' => [
+                'string',
+            ],
 
-            'payment_methods' => ['array'],
+            'default_billing_address' => [
+                'nullable',
+                'string',
+            ],
 
-            // ADD THESE
-            'show_featured_products' => ['boolean'],
-            'show_best_sellers' => ['boolean'],
-            'show_new_arrivals' => ['boolean'],
+            'default_shipping_address' => [
+                'nullable',
+                'string',
+            ],
 
-                /*
+            'seo_title' => [
+                'string',
+            ],
+
+            'seo_description' => [
+                'string',
+            ],
+
+            'seo_keywords' => [
+                'string',
+            ],
+
+            'contact_whatsapp' => [
+                'string',
+            ],
+
+            'email_notifications' => [
+                'boolean',
+            ],
+
+            'wishlist_public' => [
+                'boolean',
+            ],
+
+            'preferred_delivery_time' => [
+                'nullable',
+                'string',
+            ],
+
+            'leave_at_door' => [
+                'boolean',
+            ],
+
+            'signature_required' => [
+                'boolean',
+            ],
+
+            'contact_email' => [
+                'nullable',
+                'email',
+            ],
+
+            'contact_phone' => [
+                'nullable',
+                'string',
+            ],
+
+            'coupon_code' => [
+                'nullable',
+                'string',
+            ],
+
+            'footer_font_size' => [
+                'integer',
+            ],
+
+            'payment_methods' => [
+                'array',
+            ],
+
+            'show_featured_products' => [
+                'boolean',
+            ],
+
+            'show_best_sellers' => [
+                'boolean',
+            ],
+
+            'show_new_arrivals' => [
+                'boolean',
+            ],
+
+            /*
             |--------------------------------------------------------------------------
             | Images
             |--------------------------------------------------------------------------

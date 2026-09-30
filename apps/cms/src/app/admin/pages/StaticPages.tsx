@@ -21,6 +21,7 @@ import Testimonials from "@/cms/section-types/Testimonials";
 import Features from "@/cms/section-types/Features";
 import GeneralCountdownOffer from "@/cms/section-types/GeneralCountDownOffers";
 import Hero2 from "@/cms/section-types/Hero2";
+import twoColumnRichText from "@/cms/section-types/CMS2ColumnRichText";
 
 /* ------------------------------------------------------------------ */
 /* Section map */
@@ -38,6 +39,7 @@ const MAP: Record<SectionType, FC<any>> = {
   features: Features,
   generalCountdownOffers: GeneralCountdownOffer,
   testimonials: Testimonials,
+  twoColumnRichText: twoColumnRichText,
 };
 
 /* ------------------------------------------------------------------ */
@@ -75,7 +77,7 @@ export default function StaticPage() {
 
   if (isLoading) return <div>Loading...</div>;
   if (!data) return null;
-  console.log(data.id);
+  console.log(currentPageData);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="page">

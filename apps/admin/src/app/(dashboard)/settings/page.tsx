@@ -69,6 +69,7 @@ export default function SettingsPage() {
   } = useForm<SettingsForm>({
     defaultValues: {
       site_name: "",
+      logo: "",
       site_location: "",
       site_description: "",
       site_contact_phone: "",
@@ -94,8 +95,6 @@ export default function SettingsPage() {
       reset(settings);
     }
   }, [settings]);
-
-  if (isLoading) return <div>Loading...</div>;
 
   const onSubmit = async (data: SettingsForm) => {
     const formData = new FormData();
@@ -126,6 +125,9 @@ export default function SettingsPage() {
 
     updateSettings(formData);
   };
+
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <Card>
@@ -228,15 +230,19 @@ export default function SettingsPage() {
               <img
                 src={logoPreview}
                 className="h-16 rounded border object-contain"
+                alt="logo preview"
+              />
+            ) : settings?.logo ? (
+              <img
+                src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${settings.logo}`}
+                className="h-16 rounded border object-contain"
                 alt="logo"
               />
             ) : (
               <img
-                src={
-                  process.env.NEXT_PUBLIC_API_URL + "/storage/" + settings.logo
-                }
+                src="/logo.png"
                 className="h-16 rounded border object-contain"
-                alt="logo"
+                alt="default logo"
               />
             )}
 
@@ -254,8 +260,14 @@ export default function SettingsPage() {
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
+
                 if (!file) return;
-                setValue("logo", file);
+
+                setValue("logo", file, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+
                 setLogoPreview(URL.createObjectURL(file));
               }}
             />

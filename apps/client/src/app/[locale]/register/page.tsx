@@ -49,7 +49,11 @@ function Register() {
       <div className="sm:mx-auto sm:w-full sm:max-w-sm  ">
         <Link href="/" className="flex items-center justify-center">
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${settings?.logo}`}
+            src={
+              settings?.logo
+                ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${settings?.logo}`
+                : "/logo.png"
+            }
             alt={settings?.site_name || "Logo"}
             width={36}
             height={36}

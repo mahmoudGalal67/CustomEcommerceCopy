@@ -47,7 +47,11 @@ const Navbar = ({ dict }: { dict: any }) => {
         {/* LEFT */}
         <Link href={`/${locale}`} className="group flex items-center gap-3">
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${settings?.logo}`}
+            src={
+              settings?.logo
+                ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${settings?.logo}`
+                : "/logo.png"
+            }
             alt={settings?.site_name || "Logo"}
             width={150}
             height={120}
