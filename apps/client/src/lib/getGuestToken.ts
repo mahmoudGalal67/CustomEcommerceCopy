@@ -1,10 +1,16 @@
 export const getGuestToken = () => {
-    let token = localStorage.getItem("guest_chat_token");
+  let token = localStorage.getItem("guest_chat_token");
 
-    if (!token) {
-        token = crypto.randomUUID();
-        localStorage.setItem("guest_chat_token", token);
-    }
+  if (!token) {
+    token =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random()
+            .toString(36)
+            .slice(2)}`;
 
-    return token;
+    localStorage.setItem("guest_chat_token", token);
+  }
+
+  return token;
 };
