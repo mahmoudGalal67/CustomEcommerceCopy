@@ -53,6 +53,26 @@ services:
     networks:
       - ecommerce
 
+    # =========================
+  # Next.js Admin
+  # =========================
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile.prod
+      args:
+        NEXT_PUBLIC_API_URL: http://192.236.219.134
+        NEXT_PUBLIC_BASE_API_URL: http://192.236.219.134
+    container_name: ecommerce-admin
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_URL: http://app
+    depends_on:
+      - app
+    networks:
+      - ecommerce
+
   # =========================
   # Public Nginx
   # =========================

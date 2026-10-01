@@ -26,7 +26,7 @@ apps/back/storage/framework/views/*
 apps/back/bootstrap/cache/*
 
 # Laravel environment
-apps/back/.env
+# apps/back/.env
 
 # Docker
 *.log
