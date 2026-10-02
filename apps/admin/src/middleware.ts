@@ -1,31 +1,44 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(req: NextRequest) {
-    const refreshToken = req.cookies.get("refresh_token");
-    const { pathname } = req.nextUrl;
-    const url = req.nextUrl.clone();
+const BASE_PATH = "/admin";
 
-    // Ignore static files
+export function middleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
+
+    const appPath =
+        pathname.startsWith(BASE_PATH)
+            ? pathname.slice(BASE_PATH.length) || "/"
+            : pathname;
+
+    const refreshToken = req.cookies.get("refresh_token")?.value;
+
+    // Static/internal files
     if (
-        pathname.startsWith("/_next") ||
-        pathname.includes(".")
+        appPath.startsWith("/_next") ||
+        appPath === "/favicon.ico" ||
+        appPath.includes(".")
     ) {
         return NextResponse.next();
     }
 
-    // ✅ Allow login
-    if (pathname === "/login") {
+    // Login page
+    if (appPath === "/login") {
         if (refreshToken) {
-            url.pathname = "/";
+            const url = req.nextUrl.clone();
+            url.pathname = `${BASE_PATH}/`;
+
             return NextResponse.redirect(url);
         }
+
         return NextResponse.next();
     }
 
-    // ❌ Protect everything else
+    // Protected routes
     if (!refreshToken) {
-        url.pathname = "/login";
+        const url = req.nextUrl.clone();
+        url.pathname = `${BASE_PATH}/login`;
+
         return NextResponse.redirect(url);
     }
 
@@ -33,8 +46,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: [
-        "/((?!login|_next/static|_next/public|_next/image|favicon.ico).*)",
-    ],
+    matcher: ["/admin/:path*"],
 };
-
