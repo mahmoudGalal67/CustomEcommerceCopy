@@ -40,13 +40,13 @@ class Product extends Model
     }
     public function categories()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(category::class);
     }
     public function translations()
     {
         return $this->hasMany(Product_translations::class);
     }
-        public function orderItems()
+    public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }

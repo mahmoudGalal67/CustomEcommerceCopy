@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
-use App\Models\Product;
 use App\Services\WishlistService;
 use App\Services\TokenService;
 use Illuminate\Http\Request;

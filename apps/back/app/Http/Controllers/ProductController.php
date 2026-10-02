@@ -13,157 +13,156 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Variant;
 use App\Models\VariantImage;
 use Illuminate\Support\Facades\Storage;
-use Mockery\Undefined;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-public function index(Request $request)
-{
-    $query = Product::query()->with([
-        'categories.translations',
-        'translations',
-        'variants.images',
-        'variants.color',
-        'variants.size'
-    ]);
+    public function index(Request $request)
+    {
+        $query = Product::query()->with([
+            'categories.translations',
+            'translations',
+            'variants.images',
+            'variants.color',
+            'variants.size'
+        ]);
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Product Search - English + Arabic
     |--------------------------------------------------------------------------
     */
-    if ($request->filled('search')) {
+        if ($request->filled('search')) {
 
-        $search = trim($request->search);
+            $search = trim($request->search);
 
-        $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search) {
 
-            // Search product translations in both languages
-            $q->whereHas('translations', function ($t) use ($search) {
+                // Search product translations in both languages
+                $q->whereHas('translations', function ($t) use ($search) {
 
-                $t->whereIn('locale', ['en', 'ar'])
-                    ->where(function ($tt) use ($search) {
+                    $t->whereIn('locale', ['en', 'ar'])
+                        ->where(function ($tt) use ($search) {
 
-                        $tt->where('name', 'like', "%{$search}%")
-                            ->orWhere('description', 'like', "%{$search}%");
+                            $tt->where('name', 'like', "%{$search}%")
+                                ->orWhere('description', 'like', "%{$search}%");
+                        });
+                })
+
+                    // Search product ID
+                    ->orWhere('id', 'like', "%{$search}%")
+
+                    // Search categories in both languages
+                    ->orWhereHas('categories.translations', function ($t) use ($search) {
+
+                        $t->whereIn('locale', ['en', 'ar'])
+                            ->where('name', 'like', "%{$search}%");
                     });
-            })
-
-            // Search product ID
-            ->orWhere('id', 'like', "%{$search}%")
-
-            // Search categories in both languages
-            ->orWhereHas('categories.translations', function ($t) use ($search) {
-
-                $t->whereIn('locale', ['en', 'ar'])
-                    ->where('name', 'like', "%{$search}%");
             });
-        });
-    }
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Category Filter - English + Arabic
     |--------------------------------------------------------------------------
     */
-    if (
-        $request->filled('category') &&
-        $request->category !== 'all' &&
-        $request->category !== 'undefined'
-    ) {
+        if (
+            $request->filled('category') &&
+            $request->category !== 'all' &&
+            $request->category !== 'undefined'
+        ) {
 
-        $category = trim($request->category);
+            $category = trim($request->category);
 
-        $query->whereHas('categories.translations', function ($q) use ($category) {
+            $query->whereHas('categories.translations', function ($q) use ($category) {
 
-            $q->whereIn('locale', ['en', 'ar'])
-                ->where('name', $category);
-        });
-    }
+                $q->whereIn('locale', ['en', 'ar'])
+                    ->where('name', $category);
+            });
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Price Range Filter
     |--------------------------------------------------------------------------
     */
-    if ($request->filled('min_price') && $request->filled('max_price')) {
+        if ($request->filled('min_price') && $request->filled('max_price')) {
 
-        $min = $request->min_price;
-        $max = $request->max_price;
+            $min = $request->min_price;
+            $max = $request->max_price;
 
-        $query->where(function ($q) use ($min, $max) {
+            $query->where(function ($q) use ($min, $max) {
 
-            // Base product price
-            $q->whereBetween('base_price', [$min, $max])
+                // Base product price
+                $q->whereBetween('base_price', [$min, $max])
 
-                // Or one of its variants
-                ->orWhereHas('variants', function ($sub) use ($min, $max) {
+                    // Or one of its variants
+                    ->orWhereHas('variants', function ($sub) use ($min, $max) {
 
-                    $sub->whereBetween('price', [$min, $max]);
-                });
-        });
-    }
+                        $sub->whereBetween('price', [$min, $max]);
+                    });
+            });
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Size Filter
     |--------------------------------------------------------------------------
     */
-    if ($request->filled('size')) {
+        if ($request->filled('size')) {
 
-        $query->whereHas('variants', function ($q) use ($request) {
+            $query->whereHas('variants', function ($q) use ($request) {
 
-            $q->where('size', $request->size);
-        });
-    }
+                $q->where('size', $request->size);
+            });
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Color Filter
     |--------------------------------------------------------------------------
     */
-    if ($request->filled('color')) {
+        if ($request->filled('color')) {
 
-        $query->whereHas('variants', function ($q) use ($request) {
+            $query->whereHas('variants', function ($q) use ($request) {
 
-            $q->where('color', $request->color);
-        });
-    }
+                $q->where('color', $request->color);
+            });
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Sorting
     |--------------------------------------------------------------------------
     */
-    if ($request->filled('sort')) {
+        if ($request->filled('sort')) {
 
-        $sort = $request->get('sort');
+            $sort = $request->get('sort');
 
-        switch ($sort) {
+            switch ($sort) {
 
-            case 'oldest':
+                case 'oldest':
 
-                $query->orderBy('created_at', 'asc');
+                    $query->orderBy('created_at', 'asc');
 
-                break;
+                    break;
 
-            case 'newest':
+                case 'newest':
 
-                $query->orderBy('created_at', 'desc');
+                    $query->orderBy('created_at', 'desc');
 
-                break;
+                    break;
 
-            case 'asc':
-            case 'desc':
+                case 'asc':
+                case 'desc':
 
-                $direction = $sort;
+                    $direction = $sort;
 
-                $query
-                    ->select('products.*')
-                    ->selectRaw("
+                    $query
+                        ->select('products.*')
+                        ->selectRaw("
                         COALESCE(
                             (
                                 SELECT MIN(price)
@@ -173,27 +172,26 @@ public function index(Request $request)
                             products.base_price
                         ) as effective_price
                     ")
-                    ->orderBy('effective_price', $direction);
+                        ->orderBy('effective_price', $direction);
 
-                break;
+                    break;
+            }
+        } else {
+
+            $query->latest();
         }
 
-    } else {
-
-        $query->latest();
-    }
-
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Pagination
     |--------------------------------------------------------------------------
     */
-    $limit = $request->get('limit', 20);
+        $limit = $request->get('limit', 20);
 
-    return response()->json(
-        $query->paginate($limit)
-    );
-}
+        return response()->json(
+            $query->paginate($limit)
+        );
+    }
     public function Dashboardindex(Request $request)
     {
         $locale = 'en';
@@ -360,10 +358,6 @@ public function index(Request $request)
         });
         $validated = $validator->validate();
 
-        /**
-         * @var \App\Models\User $user
-         */
-
         $sellerId = $request->user()->seller->id;
         $Slug = Str::slug($validated['translations'][0]['name']);
         if (
@@ -521,502 +515,497 @@ public function index(Request $request)
     public function update(Request $request, string $id)
     {
         return DB::transaction(function () use ($request, $id) {
-        // 1️⃣ VALIDATION
-        $validator = Validator::make($request->all(), [
+            // 1️⃣ VALIDATION
+            $validator = Validator::make($request->all(), [
 
-            'category_id' => 'nullable',
-            'base_price' => 'nullable|numeric',
-            'stock' => 'nullable|numeric',
-            'base_images' => 'nullable|array',
-            'deleted_base_images' => 'nullable|array',
-            'is_active' => 'boolean',
+                'category_id' => 'nullable',
+                'base_price' => 'nullable|numeric',
+                'stock' => 'nullable|numeric',
+                'base_images' => 'nullable|array',
+                'deleted_base_images' => 'nullable|array',
+                'is_active' => 'boolean',
 
-            // ✅ Translations optional
-            'translations' => 'required|array',
-            'translations.*.locale' => 'required_with:translations|string|max:20',
-            'translations.*.name' => 'required_with:translations|string|max:50',
-            'translations.*.description' => 'required_with:translations|string|max:50',
+                // ✅ Translations optional
+                'translations' => 'required|array',
+                'translations.*.locale' => 'required_with:translations|string|max:20',
+                'translations.*.name' => 'required_with:translations|string|max:50',
+                'translations.*.description' => 'required_with:translations|string|max:50',
 
-            // Variants
-            'variants' => 'nullable|array',
-            // 'variants.*.id' => 'required|numeric',
-            'variants.*.color_id' => 'required_with:variants|string|max:100',
-            'variants.*.size_id' => 'required_with:variants|string|max:50',
-            'variants.*.price' => 'required_with:variants|numeric|min:0',
-            'variants.*.stock' => 'required_with:variants|integer|min:0',
-            'variants.*.sku' => 'nullable|string|min:0',
-            'variants.*.images' => 'nullable|array',
-            'variants.*.images.*.type' => 'required|in:existing,new',
-            'variants.*.images.*.sort_order' => 'required|integer|min:0',
-            'variants.*.images.*.file_path' => 'required_if:variants.*.images.*.type,existing',
-            'variants.*.deleted_images' => 'nullable|array',
-        ]);
+                // Variants
+                'variants' => 'nullable|array',
+                // 'variants.*.id' => 'required|numeric',
+                'variants.*.color_id' => 'required_with:variants|string|max:100',
+                'variants.*.size_id' => 'required_with:variants|string|max:50',
+                'variants.*.price' => 'required_with:variants|numeric|min:0',
+                'variants.*.stock' => 'required_with:variants|integer|min:0',
+                'variants.*.sku' => 'nullable|string|min:0',
+                'variants.*.images' => 'nullable|array',
+                'variants.*.images.*.type' => 'required|in:existing,new',
+                'variants.*.images.*.sort_order' => 'required|integer|min:0',
+                'variants.*.images.*.file_path' => 'required_if:variants.*.images.*.type,existing',
+                'variants.*.deleted_images' => 'nullable|array',
+            ]);
 
-        $validator->after(function ($validator) use ($request) {
-            $variants = $request->input('variants');
-            $newBaseImages = $request->file('base_images', []);
-            $existingBaseImages = $request->input('existing_base_images', []);
+            $validator->after(function ($validator) use ($request) {
+                $variants = $request->input('variants');
+                $newBaseImages = $request->file('base_images', []);
+                $existingBaseImages = $request->input('existing_base_images', []);
 
-            if (empty($variants) && count($newBaseImages) === 0 && count($existingBaseImages) === 0) {
-                $validator->errors()->add(
-                    'base_images',
-                    'At least one base image is required when no variants exist'
-                );
-            }
-        });
+                if (empty($variants) && count($newBaseImages) === 0 && count($existingBaseImages) === 0) {
+                    $validator->errors()->add(
+                        'base_images',
+                        'At least one base image is required when no variants exist'
+                    );
+                }
+            });
 
-        $validated = $validator->validate();
+            $validated = $validator->validate();
 
-        $product = Product::findOrFail($id);
+            $product = Product::findOrFail($id);
 
-        /*
+            /*
         |----------------------------------------------------------------------
         | BASE IMAGES HANDLING (unchanged)
         |---------------------------------------------------------------------- 
         */
-        $existingImages = $product->base_images ?? [];
+            $existingImages = $product->base_images ?? [];
 
-        if ($request->filled('deleted_base_images')) {
-            foreach ($request->deleted_base_images as $img) {
-                Storage::disk('public')->delete($img);
-                $existingImages = array_values(array_diff($existingImages, [$img]));
+            if ($request->filled('deleted_base_images')) {
+                foreach ($request->deleted_base_images as $img) {
+                    Storage::disk('public')->delete($img);
+                    $existingImages = array_values(array_diff($existingImages, [$img]));
+                }
             }
-        }
 
-        if ($request->hasFile('base_images')) {
-            foreach ($request->file('base_images') as $file) {
-                $path = $file->store('uploads', 'public');
-                $existingImages[] = $path;
+            if ($request->hasFile('base_images')) {
+                foreach ($request->file('base_images') as $file) {
+                    $path = $file->store('uploads', 'public');
+                    $existingImages[] = $path;
+                }
             }
-        }
 
-        $validated['base_images'] = $existingImages;
-        $product->update($validated);
-        if ($request->filled('category_id') && $request->category_id!='undefined') {
-            $product->categories()->sync([(int) $request->category_id]);
-        }
-      /*
+            $validated['base_images'] = $existingImages;
+            $product->update($validated);
+            if ($request->filled('category_id') && $request->category_id != 'undefined') {
+                $product->categories()->sync([(int) $request->category_id]);
+            }
+            /*
 |--------------------------------------------------------------------------
 | VARIANTS HANDLING
 |--------------------------------------------------------------------------
 */
 
-// Variants sent from frontend
-$incomingVariants = $request->input('variants', []);
+            // Variants sent from frontend
+            $incomingVariants = $request->input('variants', []);
 
-// Existing variant IDs belonging to this product
-$existingVariantIds = $product->variants()
-    ->pluck('id')
-    ->toArray();
+            // Existing variant IDs belonging to this product
+            $existingVariantIds = $product->variants()
+                ->pluck('id')
+                ->toArray();
 
-// IDs that still exist after this update
-$keptVariantIds = [];
+            // IDs that still exist after this update
+            $keptVariantIds = [];
 
-foreach ($incomingVariants as $vIndex => $variantData) {
+            foreach ($incomingVariants as $vIndex => $variantData) {
 
-    /*
+                /*
     |--------------------------------------------------------------------------
     | UPDATE EXISTING VARIANT
     |--------------------------------------------------------------------------
     */
 
-    if (!empty($variantData['id'])) {
+                if (!empty($variantData['id'])) {
 
-        // IMPORTANT:
-        // Make sure the variant belongs to this product
-        $variant = $product->variants()
-            ->where('id', $variantData['id'])
-            ->firstOrFail();
+                    // IMPORTANT:
+                    // Make sure the variant belongs to this product
+                    $variant = $product->variants()
+                        ->where('id', $variantData['id'])
+                        ->firstOrFail();
 
-        $variant->update([
-            'price' => $variantData['price'],
-            'stock' => $variantData['stock'],
-            'color_id' => $variantData['color_id'],
-            'size_id' => $variantData['size_id'],
-            'sku' => $variantData['sku'] ?? null,
-        ]);
+                    $variant->update([
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'color_id' => $variantData['color_id'],
+                        'size_id' => $variantData['size_id'],
+                        'sku' => $variantData['sku'] ?? null,
+                    ]);
 
-        $keptVariantIds[] = $variant->id;
-    }
+                    $keptVariantIds[] = $variant->id;
+                }
 
-    /*
+                /*
     |--------------------------------------------------------------------------
     | CREATE NEW VARIANT
     |--------------------------------------------------------------------------
-    */
+    */ else {
 
-    else {
+                    $variant = $product->variants()->create([
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'color_id' => $variantData['color_id'],
+                        'size_id' => $variantData['size_id'],
+                        'sku' => $variantData['sku'] ?? null,
+                    ]);
 
-        $variant = $product->variants()->create([
-            'price' => $variantData['price'],
-            'stock' => $variantData['stock'],
-            'color_id' => $variantData['color_id'],
-            'size_id' => $variantData['size_id'],
-            'sku' => $variantData['sku'] ?? null,
-        ]);
+                    $keptVariantIds[] = $variant->id;
+                }
 
-        $keptVariantIds[] = $variant->id;
-    }
-
-    /*
+                /*
     |--------------------------------------------------------------------------
     | DELETE REMOVED VARIANT IMAGES
     |--------------------------------------------------------------------------
     */
 
-    if (!empty($variantData['deleted_images'])) {
+                if (!empty($variantData['deleted_images'])) {
 
-        foreach ($variantData['deleted_images'] as $path) {
+                    foreach ($variantData['deleted_images'] as $path) {
 
-            Storage::disk('public')->delete($path);
+                        Storage::disk('public')->delete($path);
 
-            VariantImage::where('variant_id', $variant->id)
-                ->where('file_path', $path)
-                ->delete();
-        }
-    }
+                        VariantImage::where('variant_id', $variant->id)
+                            ->where('file_path', $path)
+                            ->delete();
+                    }
+                }
 
-    /*
+                /*
     |--------------------------------------------------------------------------
     | VARIANT IMAGES
     |--------------------------------------------------------------------------
     */
 
-    $imagesMeta = $variantData['images'] ?? [];
+                $imagesMeta = $variantData['images'] ?? [];
 
-    $uploadedFiles = $request->file(
-        "variants.$vIndex.images",
-        []
-    );
+                $uploadedFiles = $request->file(
+                    "variants.$vIndex.images",
+                    []
+                );
 
-    /*
+                /*
     |--------------------------------------------------------------------------
     | SORT IMAGES
     |--------------------------------------------------------------------------
     */
 
-    usort(
-        $imagesMeta,
-        fn($a, $b) =>
-            intval($a['sort_order']) <=> intval($b['sort_order'])
-    );
+                usort(
+                    $imagesMeta,
+                    fn($a, $b) =>
+                    intval($a['sort_order']) <=> intval($b['sort_order'])
+                );
 
-    /*
+                /*
     |--------------------------------------------------------------------------
     | REBUILD VARIANT IMAGES
     |--------------------------------------------------------------------------
     */
 
-    // Get old images before deleting them
-    $oldImages = VariantImage::where('variant_id', $variant->id)
-        ->get();
+                // Get old images before deleting them
+                $oldImages = VariantImage::where('variant_id', $variant->id)
+                    ->get();
 
-    /*
+                /*
     |--------------------------------------------------------------------------
     | Delete images that are no longer referenced
     |--------------------------------------------------------------------------
     */
 
-    $incomingExistingPaths = collect($imagesMeta)
-        ->where('type', 'existing')
-        ->pluck('file_path')
-        ->filter()
-        ->values()
-        ->toArray();
+                $incomingExistingPaths = collect($imagesMeta)
+                    ->where('type', 'existing')
+                    ->pluck('file_path')
+                    ->filter()
+                    ->values()
+                    ->toArray();
 
-    foreach ($oldImages as $oldImage) {
+                foreach ($oldImages as $oldImage) {
 
-        if (!in_array($oldImage->file_path, $incomingExistingPaths)) {
+                    if (!in_array($oldImage->file_path, $incomingExistingPaths)) {
 
-            Storage::disk('public')->delete(
-                $oldImage->file_path
-            );
-        }
-    }
+                        Storage::disk('public')->delete(
+                            $oldImage->file_path
+                        );
+                    }
+                }
 
-    // Remove database records
-    VariantImage::where('variant_id', $variant->id)->delete();
+                // Remove database records
+                VariantImage::where('variant_id', $variant->id)->delete();
 
-    /*
+                /*
     |--------------------------------------------------------------------------
     | CREATE IMAGES AGAIN IN CORRECT ORDER
     |--------------------------------------------------------------------------
     */
 
-    $uploadIndex = 0;
+                $uploadIndex = 0;
 
-    foreach ($imagesMeta as $index => $img) {
+                foreach ($imagesMeta as $index => $img) {
 
-        /*
+                    /*
         |--------------------------------------------------------------------------
         | EXISTING IMAGE
         |--------------------------------------------------------------------------
         */
 
-        if ($img['type'] === 'existing') {
+                    if ($img['type'] === 'existing') {
 
-            VariantImage::create([
-                'variant_id' => $variant->id,
-                'file_path' => $img['file_path'],
-                'sort_order' => $index,
-                'is_main' => $index === 0,
-            ]);
-        }
+                        VariantImage::create([
+                            'variant_id' => $variant->id,
+                            'file_path' => $img['file_path'],
+                            'sort_order' => $index,
+                            'is_main' => $index === 0,
+                        ]);
+                    }
 
-        /*
+                    /*
         |--------------------------------------------------------------------------
         | NEW IMAGE
         |--------------------------------------------------------------------------
-        */
+        */ elseif ($img['type'] === 'new') {
 
-        elseif ($img['type'] === 'new') {
+                        $file = $uploadedFiles[$uploadIndex]['file'] ?? null;
 
-            $file = $uploadedFiles[$uploadIndex]['file'] ?? null;
+                        if (!$file) {
+                            $uploadIndex++;
+                            continue;
+                        }
 
-            if (!$file) {
-                $uploadIndex++;
-                continue;
+                        $path = $file->store('uploads', 'public');
+
+                        VariantImage::create([
+                            'variant_id' => $variant->id,
+                            'file_path' => $path,
+                            'sort_order' => $index,
+                            'is_main' => $index === 0,
+                        ]);
+
+                        $uploadIndex++;
+                    }
+                }
             }
 
-            $path = $file->store('uploads', 'public');
-
-            VariantImage::create([
-                'variant_id' => $variant->id,
-                'file_path' => $path,
-                'sort_order' => $index,
-                'is_main' => $index === 0,
-            ]);
-
-            $uploadIndex++;
-        }
-    }
-}
-
-/*
+            /*
 |--------------------------------------------------------------------------
 | DELETE VARIANTS REMOVED FROM FRONTEND
 |--------------------------------------------------------------------------
 */
-$variantsToDelete = array_diff(
-    $existingVariantIds,
-    $keptVariantIds
-);
+            $variantsToDelete = array_diff(
+                $existingVariantIds,
+                $keptVariantIds
+            );
 
-foreach ($variantsToDelete as $variantId) {
+            foreach ($variantsToDelete as $variantId) {
 
-    $variant = $product->variants()
-        ->where('id', $variantId)
-        ->first();
+                $variant = $product->variants()
+                    ->where('id', $variantId)
+                    ->first();
 
-    if (!$variant) {
-        continue;
-    }
+                if (!$variant) {
+                    continue;
+                }
 
-    /*
+                /*
      |--------------------------------------------------------------------------
      | Check whether variant was used in an order
      |--------------------------------------------------------------------------
      */
 
-    if ($variant->orderItems()->exists()) {
+                if ($variant->orderItems()->exists()) {
 
-        return response()->json([
-            'message' => 'This variant cannot be deleted because it has already been used in an order.',
-            'variant_id' => $variant->id,
-        ], 422);
-    }
+                    return response()->json([
+                        'message' => 'This variant cannot be deleted because it has already been used in an order.',
+                        'variant_id' => $variant->id,
+                    ], 422);
+                }
 
-    /*
+                /*
      |--------------------------------------------------------------------------
      | Delete variant images from storage
      |--------------------------------------------------------------------------
      */
 
-    $images = VariantImage::where(
-        'variant_id',
-        $variant->id
-    )->get();
+                $images = VariantImage::where(
+                    'variant_id',
+                    $variant->id
+                )->get();
 
-    foreach ($images as $image) {
+                foreach ($images as $image) {
 
-        Storage::disk('public')->delete(
-            $image->file_path
-        );
-    }
+                    Storage::disk('public')->delete(
+                        $image->file_path
+                    );
+                }
 
-    /*
+                /*
      |--------------------------------------------------------------------------
      | Delete variant images from database
      |--------------------------------------------------------------------------
      */
 
-    VariantImage::where(
-        'variant_id',
-        $variant->id
-    )->delete();
+                VariantImage::where(
+                    'variant_id',
+                    $variant->id
+                )->delete();
 
-    /*
+                /*
      |--------------------------------------------------------------------------
      | Delete variant
      |--------------------------------------------------------------------------
  */
 
-    $variant->delete();
-}
-        return response()->json([
-            'message' => 'Product updated successfully',
-            'product' => $product->load('variants', 'variants.images')
-        ]);
+                $variant->delete();
+            }
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'product' => $product->load('variants', 'variants.images')
+            ]);
         });
     }
 
-private function removeProductFromCmsSections(int $productId): void
-{
-    $pages = Page::query()->get();
+    private function removeProductFromCmsSections(int $productId): void
+    {
+        $pages = Page::query()->get();
 
-    foreach ($pages as $page) {
+        foreach ($pages as $page) {
 
-        // Make sure sections is an array
-        if (!is_array($page->sections)) {
-            continue;
-        }
+            // Make sure sections is an array
+            if (!is_array($page->sections)) {
+                continue;
+            }
 
-        $changed = false;
+            $changed = false;
 
-        $sections = collect($page->sections)
-            ->map(function ($section) use ($productId, &$changed) {
+            $sections = collect($page->sections)
+                ->map(function ($section) use ($productId, &$changed) {
 
-                /*
+                    /*
                 |--------------------------------------------------------------------------
                 | Countdown Offers
                 |--------------------------------------------------------------------------
                 */
-                if (
-                    in_array(
-                        $section['type'] ?? null,
-                        [
-                            'generalCountdownOffers',
-                            'CountDownOffers',
-                            'countdownOffers',
-                        ],
-                        true
-                    )
-                    && isset($section['offers'])
-                    && is_array($section['offers'])
-                ) {
-
-                    $originalCount = count($section['offers']);
-
-                    $section['offers'] = array_values(
-                        array_filter(
-                            $section['offers'],
-                            function ($offer) use ($productId) {
-
-                                return (string) ($offer['offerProduct'] ?? '') !==
-                                    (string) $productId;
-                            }
-                        )
-                    );
-
                     if (
-                        count($section['offers']) !== $originalCount
+                        in_array(
+                            $section['type'] ?? null,
+                            [
+                                'generalCountdownOffers',
+                                'CountDownOffers',
+                                'countdownOffers',
+                            ],
+                            true
+                        )
+                        && isset($section['offers'])
+                        && is_array($section['offers'])
                     ) {
-                        $changed = true;
+
+                        $originalCount = count($section['offers']);
+
+                        $section['offers'] = array_values(
+                            array_filter(
+                                $section['offers'],
+                                function ($offer) use ($productId) {
+
+                                    return (string) ($offer['offerProduct'] ?? '') !==
+                                        (string) $productId;
+                                }
+                            )
+                        );
+
+                        if (
+                            count($section['offers']) !== $originalCount
+                        ) {
+                            $changed = true;
+                        }
                     }
-                }
 
-                return $section;
-            })
-            ->values()
-            ->toArray();
+                    return $section;
+                })
+                ->values()
+                ->toArray();
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Save only if something actually changed
         |--------------------------------------------------------------------------
         */
-        if ($changed) {
-            $page->sections = $sections;
-            $page->save();
+            if ($changed) {
+                $page->sections = $sections;
+                $page->save();
+            }
         }
     }
-}
     /**
      * Remove the specified resource from storage.
      */
 
 
-public function destroy(Request $request)
-{
-    $validated = $request->validate([
-        'ids' => 'required|array|min:1',
-        'ids.*' => 'integer|exists:products,id',
-    ]);
+    public function destroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:products,id',
+        ]);
 
-    DB::beginTransaction();
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $products = Product::whereIn('id', $validated['ids'])->get();
+            $products = Product::whereIn('id', $validated['ids'])->get();
 
-        foreach ($products as $product) {
+            foreach ($products as $product) {
 
-            /*
+                /*
             |--------------------------------------------------------------------------
             | Check if product has been used in an order
             |--------------------------------------------------------------------------
             */
 
-            $hasOrders = $product->orderItems()->exists();
+                $hasOrders = $product->orderItems()->exists();
 
-            /*
+                /*
             |--------------------------------------------------------------------------
             | Product is used in an order
             |--------------------------------------------------------------------------
             */
 
-            if ($hasOrders) {
+                if ($hasOrders) {
 
-                // Remove it from CMS sections
-                $this->removeProductFromCmsSections($product->id);
+                    // Remove it from CMS sections
+                    $this->removeProductFromCmsSections($product->id);
 
-                // Don't physically delete it
-                $product->update([
-                    'is_active' => false,
-                ]);
+                    // Don't physically delete it
+                    $product->update([
+                        'is_active' => false,
+                    ]);
 
-                continue;
-            }
+                    continue;
+                }
 
-            /*
+                /*
             |--------------------------------------------------------------------------
             | Product has never been ordered
             |--------------------------------------------------------------------------
             */
 
-            // Remove it from CMS first
-            $this->removeProductFromCmsSections($product->id);
+                // Remove it from CMS first
+                $this->removeProductFromCmsSections($product->id);
 
-            // Now it is safe to delete
-            $product->delete();
+                // Now it is safe to delete
+                $product->delete();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Products deleted successfully',
+            ]);
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to delete products.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        DB::commit();
-
-        return response()->json([
-            'message' => 'Products deleted successfully',
-        ]);
-
-    } catch (\Throwable $e) {
-
-        DB::rollBack();
-
-        return response()->json([
-            'message' => 'Failed to delete products.',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
     // ✅ Create variant with images
     public function storeVariant(Request $request, $productId)
     {
@@ -1084,7 +1073,7 @@ public function destroy(Request $request)
         return response()->json($query->get());
     }
 
-    public function getAllProductsName()
+    public function getAllProductsName(Request $request)
     {
         $locale = $request->locale ?? app()->getLocale();
 

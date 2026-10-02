@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\Category;
+use App\Models\category;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -51,7 +51,7 @@ class SearchController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $categories = Category::query()
+        $categories = category::query()
             ->whereHas('translations', function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%");
             })
