@@ -103,7 +103,9 @@ export default function UploadButton({
       setUploading(false);
     }
   };
-
+const imageSrc = slide.image?.startsWith("http")
+  ? slide.image
+  : `${import.meta.env.VITE_API_URL}${slide.image}`;
   return (
     <div className="w-full max-w-md mx-auto">
       <input
@@ -124,7 +126,7 @@ export default function UploadButton({
 
         {slide.image ? (
           <img
-            src={`${import.meta.env.VITE_API_URL}${slide.image}`}
+              src={imageSrc}
             alt="preview"
             className="mx-auto mb-3 max-h-40 rounded-xl object-contain"
           />
