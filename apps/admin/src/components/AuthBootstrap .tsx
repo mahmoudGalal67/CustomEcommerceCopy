@@ -21,19 +21,16 @@ export const AuthBootstrap = () => {
         skip: !refreshSuccess,
     });
 
-    // Get a fresh access token using the refresh cookie
     useEffect(() => {
         refresh();
     }, [refresh]);
 
-    // Get the authenticated user after the token has been refreshed
     useEffect(() => {
         if (meSuccess && data) {
             dispatch(setUser(data));
         }
     }, [meSuccess, data, dispatch]);
 
-    // If refresh or /me fails, consider the user logged out
     useEffect(() => {
         if (refreshError || meError) {
             dispatch(logout());

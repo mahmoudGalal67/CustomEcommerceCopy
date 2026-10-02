@@ -1,44 +1,35 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const BASE_PATH = "/admin";
-
 export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
-    const appPath =
-        pathname.startsWith(BASE_PATH)
-            ? pathname.slice(BASE_PATH.length) || "/"
-            : pathname;
-
     const refreshToken = req.cookies.get("refresh_token")?.value;
 
-    // Static/internal files
+    // Ignore Next.js internals and static files
     if (
-        appPath.startsWith("/_next") ||
-        appPath === "/favicon.ico" ||
-        appPath.includes(".")
+        pathname.startsWith("/_next") ||
+        pathname === "/favicon.ico" ||
+        pathname.includes(".")
     ) {
         return NextResponse.next();
     }
 
     // Login page
-    if (appPath === "/login") {
+    if (pathname === "/login") {
         if (refreshToken) {
             const url = req.nextUrl.clone();
-            url.pathname = `${BASE_PATH}/`;
-
+            url.pathname = "/";
             return NextResponse.redirect(url);
         }
 
         return NextResponse.next();
     }
 
-    // Protected routes
+    // Protect all other admin pages
     if (!refreshToken) {
         const url = req.nextUrl.clone();
-        url.pathname = `${BASE_PATH}/login`;
-
+        url.pathname = "/login";
         return NextResponse.redirect(url);
     }
 
@@ -46,5 +37,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/admin/:path*"],
+    matcher: [
+        "/((?!_next/static|_next/image|favicon.ico).*)",
+    ],
 };
