@@ -14,12 +14,17 @@ COPY packages/sharedSections ./packages/sharedSections
 
 WORKDIR /workspace/apps/cms
 
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 RUN npm run build
 
 
 FROM nginx:1.27-alpine
 
 COPY --from=builder /workspace/apps/cms/dist /usr/share/nginx/html
+
+COPY apps/cms/docker/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

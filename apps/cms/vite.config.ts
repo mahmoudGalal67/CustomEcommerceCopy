@@ -2,9 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
-// https://vite.dev/config/
+
 export default defineConfig({
+  base: "/cms/",
+
   plugins: [react(), tailwindcss()],
+
   server: {
     host: "0.0.0.0",
     port: 5173,
@@ -13,6 +16,7 @@ export default defineConfig({
       interval: 100,
     },
   },
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -20,12 +24,14 @@ export default defineConfig({
         __dirname,
         "../../packages/sharedSections",
       ),
-
       react: path.resolve(__dirname, "../../node_modules/react"),
-
-      "react-dom": path.resolve(__dirname, "../../node_modules/react-dom"),
+      "react-dom": path.resolve(
+        __dirname,
+        "../../node_modules/react-dom"
+      ),
     },
   },
+
   optimizeDeps: {
     include: ["react", "react-dom"],
   },

@@ -73,6 +73,22 @@ services:
     networks:
       - ecommerce
 
+    # =========================
+  # Vite CMS
+  # =========================
+  cms:
+    build:
+      context: .
+      dockerfile: apps/cms/Dockerfile.prod
+      args:
+        VITE_API_URL: http://192.236.219.134
+    container_name: ecommerce-cms
+    restart: unless-stopped
+    depends_on:
+      - app
+    networks:
+      - ecommerce
+
   # =========================
   # Public Nginx
   # =========================

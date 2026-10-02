@@ -29,57 +29,40 @@ function Login() {
         resolver: zodResolver(loginSchema),
     });
 
-    const onSubmit = async (data: loginForm) => {
-        try {
-            const response = await login(data);
-            console.log(response);
-          
-            if (
-                !response?.userInfo ||
-                !["admin", "seller"].includes(response.userInfo.role)
-            ) {
-                setError("root", {
-                    type: "manual",
-                    message: "You are not authorized to access the panel",
-                });
-                return;
-            }
-              if (
-                response.userInfo.status !== "approved"
-            ) {
-                setError("root", {
-                    type: "manual",
-                    message: "Waiting for admin approval. You are not authorized to access the panel",
-                });
-                return;
-            }
-            // ✅ Success
-            setSuccess(true);
-            setTimeout(() => {
-                router.push("/");
-            }, 1200);
-        } catch (error: any) {
-            console.log(error);
-            // ❌ Invalid email or password
-            if (error?.data?.message === "Invalid credentials") {
-                setError("email", {
-                    type: "manual",
-                    message: "Invalid email or password",
-                });
-                setError("password", {
-                    type: "manual",
-                    message: "Invalid email or password",
-                });
-                return;
-            }
+const onSubmit = async (data: loginForm) => {
+    try {
+        const response = await login(data);
+        console.log(response);
 
+        if (
+            !response?.userInfo ||
+            !["admin", "seller"].includes(response.userInfo.role)
+        ) {
             setError("root", {
                 type: "manual",
-                message: "Something went wrong. Please try again.",
+                message: "You are not authorized to access the panel",
             });
-            console.log(error);
+            return;
         }
-    };
+
+        if (response.userInfo.status !== "approved") {
+            setError("root", {
+                type: "manual",
+                message:
+                    "Waiting for admin approval. You are not authorized to access the panel",
+            });
+            return;
+        }
+
+        setSuccess(true);
+
+        setTimeout(() => {
+            window.location.replace("/admin/");
+        }, 1200);
+    } catch (error: any) {
+        // ...
+    }
+};
 
 
     return (

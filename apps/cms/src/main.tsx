@@ -12,7 +12,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <CMSProvider>
-        <BrowserRouter>
+        <BrowserRouter  basename="/cms">
           <AuthBootstrap />
           <App />
         </BrowserRouter>
