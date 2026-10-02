@@ -64,13 +64,17 @@ export default function Banner({
         loop
         className="h-[400px] w-full md:h-[500px]"
       >
-        {slides.map((slide) => (
-          <SwiperSlide key={slide.id}>
+        {slides.map((slide) => {
+          const imageSrc = slide.image?.startsWith("http")
+            ? slide.image
+            : `${apiUrl}${slide.image}`;
+          
+          return (          <SwiperSlide key={slide.id}>
             <div
               className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-white"
               style={{
-                backgroundImage: slide.image
-                  ? `url(${apiUrl}${slide.image})`
+                backgroundImage: imageSrc
+                  ? `url(${imageSrc})`
                   : undefined,
               }}
             >
@@ -140,9 +144,10 @@ export default function Banner({
                 </p>
               </div>
             </div>
-          </SwiperSlide>
-        ))}
+          </SwiperSlide>)
+})}
       </Swiper>
     </section>
   );
 }
+  

@@ -112,7 +112,7 @@ const imageSrc = slide.image?.startsWith("http")
         ref={inputRef}
         type="file"
         hidden
-        accept="image/*"
+        accept="image/*"  
         onChange={handleChange}
       />
 
