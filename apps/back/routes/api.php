@@ -64,12 +64,11 @@ Route::apiResource('products', ProductController::class)->only(['index', 'show']
 
 Route::middleware(['auth.jwt', 'role:admin'])->group(
     function () {
-    Route::delete('categories', [CategoryController::class, 'destroy']);
-    Route::get('categories/{id}', [CategoryController::class, 'show']);
-Route::post('categories/{id}', [CategoryController::class, 'update']);
-Route::delete('categories/{id}', [CategoryController::class, 'destroy']);
-    Route::post('categories', [CategoryController::class, 'store']);
-
+        Route::delete('categories', [CategoryController::class, 'destroy']);
+        Route::get('categories/{id}', [CategoryController::class, 'show']);
+        Route::post('categories/{id}', [CategoryController::class, 'update']);
+        Route::delete('categories/{id}', [CategoryController::class, 'destroy']);
+        Route::post('categories', [CategoryController::class, 'store']);
     }
 );
 
@@ -132,7 +131,7 @@ Route::middleware('auth.jwt')->group(
 */
 Route::middleware(['auth.jwt'])->group(function () {
     Route::prefix('orders')->group(function () {
-    Route::get('/order/{id}', [OrderController::class, 'show']);
+        Route::get('/order/{id}', [OrderController::class, 'show']);
     });
 });
 
@@ -179,7 +178,6 @@ Route::prefix('pages')->group(function () {
 Route::middleware(['auth.jwt', 'role:admin'])->group(function () {
     Route::prefix('orders')->group(function () {
         Route::get('/all', [OrderController::class, 'Index']);
-
     });
 });
 
@@ -332,31 +330,31 @@ Route::middleware(['auth.jwt', 'role:admin'])->prefix('admin')->group(function (
         [ContactController::class, 'destroy']
     );
     Route::post(
-    '/contact-messages/{contactMessage}/reply',
-    [ContactController::class, 'reply']
-);
+        '/contact-messages/{contactMessage}/reply',
+        [ContactController::class, 'reply']
+    );
 });
 
 Route::middleware(['auth.jwt', 'role:admin'])->prefix('admin')->group(function () {
-         Route::get(
-            '/newsletter/subscribers',
-            [NewsletterController::class, 'index']
-        );
+    Route::get(
+        '/newsletter/subscribers',
+        [NewsletterController::class, 'index']
+    );
 
-        Route::get(
-            '/newsletter/subscribers/{newsletterSubscriber}',
-            [NewsletterController::class, 'show']
-        );
+    Route::get(
+        '/newsletter/subscribers/{newsletterSubscriber}',
+        [NewsletterController::class, 'show']
+    );
 
-        Route::patch(
-            '/newsletter/subscribers/{newsletterSubscriber}',
-            [NewsletterController::class, 'update']
-        );
+    Route::patch(
+        '/newsletter/subscribers/{newsletterSubscriber}',
+        [NewsletterController::class, 'update']
+    );
 
-        Route::delete(
-            '/newsletter/subscribers/{newsletterSubscriber}',
-            [NewsletterController::class, 'destroy']
-        );
+    Route::delete(
+        '/newsletter/subscribers/{newsletterSubscriber}',
+        [NewsletterController::class, 'destroy']
+    );
 });
 Route::post(
     '/newsletter/subscribe',
