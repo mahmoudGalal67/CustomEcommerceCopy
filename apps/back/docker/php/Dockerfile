@@ -2,6 +2,7 @@ FROM php:8.3-fpm
 
 WORKDIR /var/www
 
+# System dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    libpq-dev\
+    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo_mysql \
@@ -26,11 +27,31 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-COPY . /var/www
+# Copy Composer files first for better Docker cache
+COPY composer.json composer.lock ./
 
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# Install development dependencies
+RUN composer install \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader
+
+# Copy application
+COPY . .
+
+# Laravel writable directories
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R www-data:www-data \
+        storage \
+        bootstrap/cache
 
 EXPOSE 9000
 

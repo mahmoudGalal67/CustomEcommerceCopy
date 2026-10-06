@@ -41,8 +41,8 @@ services:
       context: .
       dockerfile: apps/client/Dockerfile.prod
       args:
-        NEXT_PUBLIC_API_URL: http://192.236.219.134
-        NEXT_PUBLIC_URL: http://192.236.219.134
+        NEXT_PUBLIC_API_URL: https://galalstore.duckdns.org
+        NEXT_PUBLIC_URL: https://galalstore.duckdns.org
     container_name: ecommerce-client
     restart: unless-stopped
     environment:
@@ -61,8 +61,8 @@ services:
       context: .
       dockerfile: apps/admin/Dockerfile.prod
       args:
-        NEXT_PUBLIC_API_URL: http://192.236.219.134
-        NEXT_PUBLIC_BASE_API_URL: http://192.236.219.134
+        NEXT_PUBLIC_API_URL: https://galalstore.duckdns.org
+        NEXT_PUBLIC_BASE_API_URL: https://galalstore.duckdns.org
     container_name: ecommerce-admin
     restart: unless-stopped
     environment:
@@ -81,7 +81,7 @@ services:
       context: .
       dockerfile: apps/cms/Dockerfile.prod
       args:
-        VITE_API_URL: http://192.236.219.134
+        VITE_API_URL: https://galalstore.duckdns.org
     container_name: ecommerce-cms
     restart: unless-stopped
     depends_on:

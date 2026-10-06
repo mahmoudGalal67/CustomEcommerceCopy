@@ -67,10 +67,13 @@ const WishlistPage = () => {
                 {/* IMAGE */}
                 <div className="relative w-32 h-32 bg-gray-50 rounded-lg overflow-hidden">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${item.product?.variants?.[0]?.images?.[0]?.file_path}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${
+                      item.product?.variants?.[0]?.images?.[0]?.file_path ||
+                      item.product?.base_images?.[0]
+                    }`}
                     alt={
                       item.product?.translations?.find(
-                        (t: any) => t.locale == locale,
+                        (t: any) => t.locale === locale,
                       )?.name ?? "Product"
                     }
                     fill

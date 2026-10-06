@@ -37,10 +37,10 @@ const nextConfig: NextConfig = {
         pathname: "/storage/**",
       },
       {
-      protocol: "http",
-      hostname: "192.236.219.134",
-      pathname: "/storage/**",
-    },
+        protocol: "http",
+        hostname: "galalstore.duckdns.org",
+        pathname: "/storage/**",
+      },
     ],
   },
 };

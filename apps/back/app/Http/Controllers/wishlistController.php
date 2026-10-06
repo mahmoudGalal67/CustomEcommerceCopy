@@ -13,8 +13,7 @@ class WishlistController extends Controller
     public function __construct(
         public WishlistService $wishlistService,
         public TokenService $tokenService
-    ) {
-    }
+    ) {}
     // 🧩 Get current  wishlist
     public function index(Request $request)
     {
@@ -96,32 +95,32 @@ class WishlistController extends Controller
         return response()->json(["message" => "Wishlist merged"])
             ->cookie("guest_token", null, -1);
     }
-   public function deleteorcreateitem(array $validated, Wishlist $wishlist)
-{
-    $item = $wishlist->items()
-        ->where('product_id', $validated['product_id'])
-        ->first();
+    public function deleteorcreateitem(array $validated, Wishlist $wishlist)
+    {
+        $item = $wishlist->items()
+            ->where('product_id', $validated['product_id'])
+            ->first();
 
-    if ($item) {
-        $item->delete();
+        if ($item) {
+            $item->delete();
+
+            return [
+                'item' => null,
+                'action' => 'removed',
+                'message' => 'Removed from wishlist',
+            ];
+        }
+
+        $item = $wishlist->items()->create([
+            'product_id' => $validated['product_id'],
+        ]);
 
         return [
-            'item' => null,
-            'action' => 'removed',
-            'message' => 'Removed from wishlist',
+            'item' => $item->load('product.translations'),
+            'action' => 'added',
+            'message' => 'Added to wishlist',
         ];
     }
-
-    $item = $wishlist->items()->create([
-        'product_id' => $validated['product_id'],
-    ]);
-
-    return [
-        'item' => $item->load('product.translations'),
-        'action' => 'added',
-        'message' => 'Added to wishlist',
-    ];
-}
     private function responseWishlist($wishlist)
     {
         return response()->json([

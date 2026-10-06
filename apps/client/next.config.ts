@@ -44,12 +44,12 @@ const nextConfig: NextConfig = {
         port: "8000",
         pathname: "/storage/**",
       },
-      
+
       {
-      protocol: "http",
-      hostname: "192.236.219.134",
-      pathname: "/storage/**",
-    },
+        protocol: "http",
+        hostname: "galalstore.duckdns.org",
+        pathname: "/storage/**",
+      },
     ],
   },
 };

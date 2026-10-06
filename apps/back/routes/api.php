@@ -107,8 +107,8 @@ Route::delete('/cart/clear', [CartController::class, 'clear']);
 
 Route::get('/wishlist', [WishlistController::class, 'index']);
 Route::post('/wishlist', [WishlistController::class, 'store']);
-Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy']);
 Route::delete('/wishlist/clear', [WishlistController::class, 'clear']);
+Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy']);
 
 
 /*
