@@ -107,9 +107,26 @@ services:
     networks:
       - ecommerce
 
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: ecommerce-n8n
+    restart: unless-stopped
+    environment:
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      N8N_HOST: n8n-galalstore.duckdns.org
+      WEBHOOK_URL: https://nngalalstore.duckdns.org/
+      GENERIC_TIMEZONE: Africa/Cairo
+      TZ: Africa/Cairo
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - ecommerce
+
 networks:
   ecommerce:
 
 volumes:
   mysql_data:
   laravel_storage:
+  n8n_data:
