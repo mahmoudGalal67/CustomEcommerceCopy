@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Variant;
 use App\Models\VariantImage;
 use Illuminate\Support\Facades\Storage;
+use App\Services\KnowledgeBaseService;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -319,8 +321,10 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+ public function store(
+    Request $request,
+    KnowledgeBaseService $knowledgeBase
+){
         $validator = Validator::make(
             $request->all(),
             [
@@ -455,6 +459,14 @@ class ProductController extends Controller
                 }
             }
             DB::commit();
+            try {
+    $knowledgeBase->indexProduct($product->fresh());
+} catch (\Throwable $e) {
+    Log::error('Failed to index product in knowledge base', [
+        'product_id' => $product->id,
+        'error' => $e->getMessage(),
+    ]);
+}
             return response()->json($product->load('variants.images'), 201);
         } catch (\Throwable $e) {
             // ❌ If any step failed → rollback
@@ -512,9 +524,12 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        return DB::transaction(function () use ($request, $id) {
+  public function update(
+    Request $request,
+    string $id,
+    KnowledgeBaseService $knowledgeBase
+) {
+         $updatedProduct = DB::transaction(function () use ($request, $id) {
             // 1️⃣ VALIDATION
             $validator = Validator::make($request->all(), [
 
@@ -853,11 +868,24 @@ class ProductController extends Controller
 
                 $variant->delete();
             }
-            return response()->json([
-                'message' => 'Product updated successfully',
-                'product' => $product->load('variants', 'variants.images')
-            ]);
+              return $product->fresh([
+            'variants',
+            'variants.images',
+        ]);
         });
+            try {
+        $knowledgeBase->indexProduct($updatedProduct);
+    } catch (\Throwable $e) {
+        Log::error('Failed to re-index updated product', [
+            'product_id' => $updatedProduct->id,
+            'error' => $e->getMessage(),
+        ]);
+    }
+
+    return response()->json([
+        'message' => 'Product updated successfully',
+        'product' => $updatedProduct,
+    ]);
     }
 
     private function removeProductFromCmsSections(int $productId): void
@@ -936,13 +964,16 @@ class ProductController extends Controller
      */
 
 
-    public function destroy(Request $request)
-    {
+  public function destroy(
+    Request $request,
+    KnowledgeBaseService $knowledgeBase
+) {
         $validated = $request->validate([
             'ids' => 'required|array|min:1',
             'ids.*' => 'integer|exists:products,id',
         ]);
 
+        $productIdsToRemove = [];
         DB::beginTransaction();
 
         try {
@@ -975,6 +1006,8 @@ class ProductController extends Controller
                         'is_active' => false,
                     ]);
 
+                     $productIdsToRemove[] = $product->id;
+
                     continue;
                 }
 
@@ -989,10 +1022,21 @@ class ProductController extends Controller
 
                 // Now it is safe to delete
                 $product->delete();
+
+                $productIdsToRemove[] = $product->id;
             }
 
             DB::commit();
-
+foreach ($productIdsToRemove as $productId) {
+    try {
+        $knowledgeBase->deleteProduct($productId);
+    } catch (\Throwable $e) {
+        Log::error('Failed to remove deleted product from knowledge base', [
+            'product_id' => $productId,
+            'error' => $e->getMessage(),
+        ]);
+    }
+}
             return response()->json([
                 'message' => 'Products deleted successfully',
             ]);

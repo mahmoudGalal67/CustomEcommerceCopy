@@ -30,17 +30,14 @@ RUN apt-get update && apt-get install -y \
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy Composer files first for better Docker cache
-COPY composer.json composer.lock ./
+# Copy the Laravel application
+COPY . .
 
-# Install development dependencies
+# Install PHP dependencies
 RUN composer install \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader
-
-# Copy application
-COPY . .
 
 # Laravel writable directories
 RUN mkdir -p \

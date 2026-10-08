@@ -55,6 +55,7 @@ class CategoryController extends Controller
             'slug' => 'required|string',
             'icon' => 'nullable|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
         ]);
+        $path = null;
         if ($request->hasFile('icon')) {
             $path = $request->file('icon')->store('uploads', 'public');
             $validated['icon'] = $path;

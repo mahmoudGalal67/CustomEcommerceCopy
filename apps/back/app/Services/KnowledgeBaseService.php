@@ -35,42 +35,102 @@ class KnowledgeBaseService
     |--------------------------------------------------------------------------
     */
 
+    // public function getEmbedding(string $text): array
+    // {
+    //     $response = Http::timeout(60)
+    //         ->post(
+    //             rtrim(
+    //                 env('OLLAMA_URL', 'http://localhost:11434'),
+    //                 '/'
+    //             ) . '/api/embeddings',
+    //             [
+    //                 'model' => env(
+    //                     'OLLAMA_EMBEDDING_MODEL',
+    //                     'nomic-embed-text'
+    //                 ),
+    //                 'prompt' => $text,
+    //             ]
+    //         )
+    //         ->throw();
+
+    //     $embedding = $response->json('embedding');
+
+    //     if (!is_array($embedding)) {
+    //         throw new \Exception(
+    //             'Ollama did not return a valid embedding.'
+    //         );
+    //     }
+
+    //     if (count($embedding) !== $this->vectorSize) {
+    //         throw new \Exception(
+    //             "Invalid embedding size. Expected {$this->vectorSize}, got "
+    //                 . count($embedding)
+    //         );
+    //     }
+
+    //     return $embedding;
+    // }
+
     public function getEmbedding(string $text): array
-    {
-        $response = Http::timeout(60)
-            ->post(
-                rtrim(
-                    env('OLLAMA_URL', 'http://localhost:11434'),
-                    '/'
-                ) . '/api/embeddings',
-                [
-                    'model' => env(
-                        'OLLAMA_EMBEDDING_MODEL',
-                        'nomic-embed-text'
-                    ),
-                    'prompt' => $text,
-                ]
-            )
-            ->throw();
+{
+    $apiKey = config('services.gemini.api_key');
 
-        $embedding = $response->json('embedding');
+    $model = config(
+        'services.gemini.embedding_model',
+        'gemini-embedding-2'
+    );
 
-        if (!is_array($embedding)) {
-            throw new \Exception(
-                'Ollama did not return a valid embedding.'
-            );
-        }
+    $dimensions = config(
+        'services.gemini.embedding_dimensions',
+        768
+    );
 
-        if (count($embedding) !== $this->vectorSize) {
-            throw new \Exception(
-                "Invalid embedding size. Expected {$this->vectorSize}, got "
-                    . count($embedding)
-            );
-        }
-
-        return $embedding;
+    if (!$apiKey) {
+        throw new \RuntimeException(
+            'Gemini API key is not configured.'
+        );
     }
 
+    $response = Http::timeout(60)
+        ->withHeaders([
+            'x-goog-api-key' => $apiKey,
+            'Content-Type' => 'application/json',
+        ])
+        ->post(
+            "https://generativelanguage.googleapis.com/v1beta/models/{$model}:embedContent",
+            [
+                'content' => [
+                    'parts' => [
+                        [
+                            'text' => $text,
+                        ],
+                    ],
+                ],
+
+                'output_dimensionality' => $dimensions,
+            ]
+        )
+        ->throw();
+
+    $embedding = $response->json(
+        'embedding.values'
+    );
+
+    if (!is_array($embedding)) {
+        throw new \RuntimeException(
+            'Gemini did not return a valid embedding.'
+        );
+    }
+
+    if (count($embedding) !== $this->vectorSize) {
+        throw new \RuntimeException(
+            "Invalid embedding size. Expected {$this->vectorSize}, got "
+            . count($embedding)
+        );
+    }
+
+    return $embedding;
+}
     /*
     |--------------------------------------------------------------------------
     | Qdrant Collection
@@ -196,6 +256,9 @@ class KnowledgeBaseService
                 $document .=
                     ", Price: {$variant->price}";
 
+                 $document .=
+                    ", Stock: {$variant->stock}";
+
                 $document .= "\n";
             }
         }
@@ -245,6 +308,48 @@ class KnowledgeBaseService
         )->throw();
     }
 
+    public function indexAllProducts(): array
+{
+    $this->ensureCollection();
+
+    $products = Product::query()->get();
+
+    $indexed = [];
+    $skipped = [];
+
+    foreach ($products as $product) {
+        // Check whether this product is already indexed in Qdrant
+        $response = Http::post(
+            "{$this->qdrantUrl}/collections/{$this->collectionName}/points",
+            [
+                'ids' => [$product->id],
+                'with_payload' => false,
+                'with_vector' => false,
+            ]
+        )->throw();
+
+        $points = $response->json('result', []);
+
+        // Qdrant returns existing points here
+        if (!empty($points)) {
+            $skipped[] = $product->id;
+            continue;
+        }
+
+        // Index only products that don't exist
+        $this->indexProduct($product);
+
+        $indexed[] = $product->id;
+    }
+
+    return [
+        'total_products' => $products->count(),
+        'indexed' => count($indexed),
+        'skipped' => count($skipped),
+        'indexed_product_ids' => $indexed,
+        'skipped_product_ids' => $skipped,
+    ];
+}
     /*
     |--------------------------------------------------------------------------
     | Delete Product
@@ -253,6 +358,7 @@ class KnowledgeBaseService
 
     public function deleteProduct(int $productId): void
     {
+          $this->ensureCollection();
         Http::delete(
             "{$this->qdrantUrl}/collections/{$this->collectionName}/points",
             [

@@ -46,4 +46,20 @@ return [
         'key' => env('N8N_AUTOMATION_KEY'),
     ],
 
+    'gemini' => [
+    'api_key' => env('GEMINI_API_KEY'),
+    'chat_model' => env(
+        'GEMINI_CHAT_MODEL',
+        'gemini-2.5-flash-lite'
+    ),
+    'embedding_model' => env(
+        'GEMINI_EMBEDDING_MODEL',
+        'gemini-embedding-2'
+    ),
+    'embedding_dimensions' => (int) env(
+        'GEMINI_EMBEDDING_DIMENSIONS',
+        768
+    ),
+],
+
 ];

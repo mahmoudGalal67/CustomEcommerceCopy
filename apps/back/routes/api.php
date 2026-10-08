@@ -9,7 +9,6 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PopupCampaignController;
 use App\Http\Controllers\SettingController;
-use App\Services\KnowledgeBaseService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -27,7 +26,9 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\n8nDailyReportController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\WishlistController;
-use Illuminate\Support\Facades\Http;
+ use App\Http\Controllers\KnowledgeBaseController;
+use App\Services\KnowledgeBaseService;
+
 /*
 |--------------------------------------------------------------------------
 | Auth Routes
@@ -366,7 +367,16 @@ Route::post(
     [NewsletterController::class, 'unsubscribe']
 );
 
-
+Route::middleware(['auth.jwt', 'role:admin'])->group(function () {
+    Route::post(
+        '/knowledge-base/products/{product}/index',
+        [KnowledgeBaseController::class, 'indexProduct']
+    );
+    Route::post(
+    '/knowledge-base/products/index-all',
+    [KnowledgeBaseController::class, 'indexAllProducts']
+);
+});
 // Route::get('/index-company-pdf', function (
 //     KnowledgeBaseService $knowledgeBaseService
 // ) {
