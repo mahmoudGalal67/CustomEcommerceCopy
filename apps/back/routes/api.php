@@ -372,22 +372,22 @@ Route::middleware(['auth.jwt', 'role:admin'])->group(function () {
         '/knowledge-base/products/{product}/index',
         [KnowledgeBaseController::class, 'indexProduct']
     );
+    });
     Route::post(
     '/knowledge-base/products/index-all',
     [KnowledgeBaseController::class, 'indexAllProducts']
 );
+Route::get('/index-company-pdf', function (
+    KnowledgeBaseService $knowledgeBaseService
+) {
+
+    $pdfPath = storage_path(
+        'app/company/AboutOurCompany.pdf'
+    );
+
+    $knowledgeBaseService->indexCompanyPdf(
+        $pdfPath
+    );
+
+    return 'Company PDF indexed successfully!';
 });
-// Route::get('/index-company-pdf', function (
-//     KnowledgeBaseService $knowledgeBaseService
-// ) {
-
-//     $pdfPath = storage_path(
-//         'app/company/AboutOurCompany.pdf'
-//     );
-
-//     $knowledgeBaseService->indexCompanyPdf(
-//         $pdfPath
-//     );
-
-//     return 'Company PDF indexed successfully!';
-// });
