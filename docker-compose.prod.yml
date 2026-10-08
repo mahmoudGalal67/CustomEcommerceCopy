@@ -157,3 +157,4 @@ volumes:
   mysql_data:
   laravel_storage:
   n8n_data:
+  qdrant_data:
