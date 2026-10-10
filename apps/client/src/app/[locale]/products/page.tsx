@@ -3,18 +3,24 @@ import { getDictionary } from "@/i18n/config";
 
 const ProductsPage = async ({
   searchParams,
-  params
+  params,
 }: {
-  searchParams: Record<string, string>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{
     locale: string;
   }>;
 }) => {
   const { locale } = await params;
-    const dict = await getDictionary(locale);
+  const queryParams = await searchParams;
+  const dict = await getDictionary(locale);
   return (
     <div>
-      <ProductList query={searchParams} params="products" locale={locale} dict={dict} />
+      <ProductList
+        query={queryParams}
+        params="products"
+        locale={locale}
+        dict={dict}
+      />
     </div>
   );
 };

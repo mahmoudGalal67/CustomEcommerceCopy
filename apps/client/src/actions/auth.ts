@@ -3,14 +3,14 @@
 import { AppDispatch } from "@/store/store";
 import { logout, setCredentials } from "@/features/auth/authSlice";
 import { cartApi } from "@/services/cartApi";
-import { RegisterData } from "@/types/user";
+import { RegisterData, LoginData } from "@/types/user";
 import { getGuestToken } from "@/lib/getGuestToken";
 
 /**
  * Handles register logic
  */
 export const handleLoginLogic = async (
-  data: any,
+  data: LoginData,
   loginApi: any,
   mergeCartApi: any,
   mergeChatApi: any,

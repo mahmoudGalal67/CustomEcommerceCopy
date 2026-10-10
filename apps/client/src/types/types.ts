@@ -1,31 +1,3 @@
-// export type ProductType = {
-//   id: number;
-//   seller_id: number;
-//   name: string;
-//   slug: string;
-//   description?: string | null;
-//   base_price?: string | null; // optional if variants exist
-//   is_active: boolean | number;
-//   is_featured: boolean | number;
-//   deleted_at?: string | null;
-//   created_at: string;
-//   updated_at: string;
-//   categories: Category[];
-//   variants?: Variant[]; // optional
-// };
-
-// export interface Category {
-//   id: number;
-//   name: string;
-//   description?: string | null;
-//   icon?: string | null;
-//   slug: string;
-//   parent_id?: number | null;
-//   created_at?: string | null;
-//   updated_at?: string | null;
-//   pivot: Pivot;
-// }
-
 export interface Pivot {
   product_id: number;
   category_id: number;

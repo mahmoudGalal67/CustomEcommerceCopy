@@ -25,8 +25,7 @@ export const orderItemsColumns = (
     header: isArabic ? "المنتج" : "Product",
     cell: ({ row }: any) => {
       const item = row.original;
-      // Get product from variant first, then direct product
-      const product = item.variant?.product ?? item.product;
+      const product = item.product;
 
       // Find current locale translation
       const translation = product?.translations?.find(

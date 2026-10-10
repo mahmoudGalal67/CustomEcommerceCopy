@@ -17,6 +17,7 @@ import { getDictionary } from "@/i18n/config";
 import ScrollButton from "@/components/ScrollButton";
 import SiteTheme from "@/components/site-theme";
 import IntroLoader from "@/components/IntroLoader";
+import ChatBox from "@/components/chatBot/ChatBox";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -68,6 +69,7 @@ export default async function ootLayout({
                     <Navbar dict={dict} />
                     {children}
                     <Footer dict={dict} />
+                    <ChatBox dict={dict} />
                     <ScrollButton />
                   </DictionaryProvider>
                 </div>

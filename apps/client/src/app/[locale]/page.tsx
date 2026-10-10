@@ -1,4 +1,3 @@
-import ChatBox from "@/components/chatBot/ChatBox";
 import ProductList from "@/components/ProductList";
 import Banner from "@/components/section-types/Banner";
 import Hero from "@/components/section-types/Hero";
@@ -66,12 +65,11 @@ const Homepage = async ({
   searchParams,
   params,
 }: {
-  searchParams: Record<string, string>;
-  params: Promise<{
-    locale: string;
-  }>;
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) => {
   const { locale } = await params;
+  const queryParams = await searchParams;
   const dict = await getDictionary(locale);
   const { data: Home } = await PagesApi.showPage({ id: "1" });
   return (
@@ -84,13 +82,12 @@ const Homepage = async ({
         return <Component key={s.id} {...s.props} />;
       })}
       <ProductList
-        query={searchParams}
+        query={queryParams}
         params="homepage"
         locale={locale}
         dict={dict}
       />
       <Newsletter />
-      <ChatBox dict={dict} />
     </div>
   );
 };

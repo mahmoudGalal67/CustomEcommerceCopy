@@ -66,16 +66,16 @@ const Homepage = async ({
   searchParams,
   params,
 }: {
-  searchParams: Record<string, string>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{
     locale: string;
     id: string;
   }>;
 }) => {
   const { locale, id } = await params;
+  const queryParams = await searchParams;
   const { data: Page } = await PagesApi.showPage({ id });
   const dict = await getDictionary(locale);
-  console.log(Page);
   return (
     <div className="">
       {Page.sections?.map((s: BaseSection) => {
@@ -86,7 +86,7 @@ const Homepage = async ({
         return <Component key={s.id} {...s.props} />;
       })}
       <ProductList
-        query={searchParams}
+        query={queryParams}
         params="homepage"
         locale={locale}
         dict={dict}

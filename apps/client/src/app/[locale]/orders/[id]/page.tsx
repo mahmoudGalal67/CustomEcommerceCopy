@@ -15,6 +15,8 @@ export default function OrderDetailsPage() {
 
   const { data, isLoading, isError } = useGetOrderQuery(Number(id));
 
+  console.log("Order details data:", data);
+
   const statusColors: Record<string, string> = {
     pending: "bg-yellow-500/15 text-yellow-700 border-yellow-500/20",
     processing: "bg-blue-500/15 text-blue-700 border-blue-500/20",

@@ -9,14 +9,15 @@ import Image from "next/image";
 export const generateMetadata = async ({
   params,
 }: {
-  params: {
+  params: Promise<{
     id: string;
     locale: "en" | "ar";
-  };
+  }>;
 }) => {
+  const { id, locale } = await params;
   const { data: product } = await productsAPi.getProductDetials({
-    id: params.id,
-    locale: params.locale,
+    id: id,
+    locale: locale,
   });
   return {
     title: product.name,

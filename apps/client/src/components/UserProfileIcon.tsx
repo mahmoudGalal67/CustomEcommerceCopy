@@ -51,7 +51,7 @@ export default function UserProfileIcon({ user, locale, dict }: any) {
   };
 
   return (
-    <div className="relative inline-block" ref={ref}>
+    <div className="relative inline-block mx-2" ref={ref}>
       {/* Trigger  */}
       <button
         onClick={() => setOpen(!open)}

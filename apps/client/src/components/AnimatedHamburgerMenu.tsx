@@ -3,13 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ShoppingBag, Heart, User, Search } from "lucide-react";
+import { Menu, X, ShoppingBag, Heart, User, Search, Bell } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 
 import { useGetPageLinksQuery } from "@/services/pagesApi";
 import { useDictionary } from "@/providers/dictionary-provider";
 import { useParams, useRouter } from "next/navigation";
+import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from "./theme-toggle";
 
 export default function AnimatedHamburgerMenu({ locale }: { locale: string }) {
   const [open, setOpen] = useState(false);
@@ -64,7 +66,7 @@ export default function AnimatedHamburgerMenu({ locale }: { locale: string }) {
         <Button
           size="icon"
           variant="ghost"
-          className="h-14 w-14 relative z-[60] cursor-pointer"
+          className="h-14 w-14 relative z-[100] cursor-pointer"
           onClick={() => setOpen((prev) => !prev)}
         >
           <AnimatePresence mode="wait" initial={false}>
@@ -107,7 +109,7 @@ export default function AnimatedHamburgerMenu({ locale }: { locale: string }) {
                 damping: 22,
                 stiffness: 180,
               }}
-              className={`fixed ${locale === "en" ? "right-0" : "left-0"} top-0 z-100 flex h-screen w-[85%] max-w-sm flex-col overflow-hidden border-l bg-white shadow-2xl dark:bg-neutral-950`}
+              className={`fixed ${locale === "en" ? "right-0" : "left-0"} top-0 z-1000 flex h-screen w-[85%] max-w-sm flex-col overflow-hidden border-l bg-white shadow-2xl dark:bg-neutral-950`}
             >
               {/* Header */}
               <div className="border-b p-6">
@@ -137,7 +139,13 @@ export default function AnimatedHamburgerMenu({ locale }: { locale: string }) {
                   />
                 </div>
               </div>
-
+              <div className="border-b border-gray-200 px-4 py-3 flex items center justify-between">
+                <LanguageSwitcher />
+                <ThemeToggle />
+                <button className="p-2 rounded-lg bg-bg cursor-pointer">
+                  <Bell className="h-5 w-5 shrink-0 text-text rounded flex justify-center items-center" />
+                </button>
+              </div>
               {/* Navigation */}
               <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-8">
                 <div className="space-y-3">
