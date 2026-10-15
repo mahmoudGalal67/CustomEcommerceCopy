@@ -25,12 +25,13 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowSelection?: Record<string, boolean>;
-  setRowSelection?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  setRowSelection?: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >;
   isLoading?: boolean;
   isFetching?: boolean;
   onSuccess?: () => void;
   setIsLoadingModal?: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 
 export function DataTable<TData extends { id: number }, TValue>({
@@ -40,13 +41,7 @@ export function DataTable<TData extends { id: number }, TValue>({
   setRowSelection,
   isLoading,
   isFetching,
-  onSuccess,
-  setIsLoadingModal,
 }: DataTableProps<TData, TValue>) {
-
-
-
-
   const table = useReactTable<TData>({
     data,
     columns,
@@ -69,7 +64,10 @@ export function DataTable<TData extends { id: number }, TValue>({
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                 </TableHead>
               ))}
             </TableRow>
@@ -77,7 +75,7 @@ export function DataTable<TData extends { id: number }, TValue>({
         </TableHeader>
 
         <TableBody>
-          {(isLoading || isFetching) ? (
+          {isLoading || isFetching ? (
             <TableRow>
               <TableCell colSpan={columns.length} className="p-4">
                 <Loading />

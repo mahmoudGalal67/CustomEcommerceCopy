@@ -2,7 +2,11 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { productSchema, ProductForm } from "../schemas/productSchema";
+import {
+  ProductFormInput,
+  productSchema,
+  type ProductForm,
+} from "../schemas/productSchema";
 
 export const useProductForm = () => {
   const {
@@ -13,7 +17,7 @@ export const useProductForm = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<ProductForm>({
+  } = useForm<ProductFormInput, any, ProductForm>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",

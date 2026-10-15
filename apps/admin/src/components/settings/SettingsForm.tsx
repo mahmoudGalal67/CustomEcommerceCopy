@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { StoreSettings, defaultSettings } from "./settings.types";
+import { defaultSettings } from "./settings.types";
 
 import { settingsSchema, SettingsFormValues } from "./settings.schema";
 

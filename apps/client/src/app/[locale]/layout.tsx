@@ -1,9 +1,5 @@
 import "./globals.css";
 
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,12 +7,11 @@ import { Providers } from "@/providers/StoreProvider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ToastContainer } from "react-toastify";
 import { DictionaryProvider } from "@/providers/dictionary-provider";
-import { Inter, Geist } from "next/font/google";
+import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { getDictionary } from "@/i18n/config";
 import ScrollButton from "@/components/ScrollButton";
 import SiteTheme from "@/components/site-theme";
-import IntroLoader from "@/components/IntroLoader";
 import ChatBox from "@/components/chatBot/ChatBox";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
@@ -45,7 +40,7 @@ export default async function ootLayout({
       className={cn("font-sans", geist.variable)}
     >
       <body className={`antialiased min-h-screen`}>
-        <IntroLoader logo="/images/about-shoes.jpg" />
+        {/* <IntroLoader logo="/images/about-shoes.jpg" /> */}
         <Providers>
           <ThemeProvider>
             <SiteTheme>

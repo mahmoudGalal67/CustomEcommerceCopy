@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useAddToCart } from "@/hooks/cart";
 import { groupProductVariants } from "@/lib/product";
@@ -28,7 +28,10 @@ const ProductCard = ({
 
   const translation = product.translations.find((t) => t.locale === locale);
 
-  const productVariants = groupProductVariants(product);
+  const productVariants = useMemo(
+    () => groupProductVariants(product),
+    [product],
+  );
 
   const [activeSizeIndex, setActiveSizeIndex] = useState(0);
   const [activeColorIndex, setActiveColorIndex] = useState(0);
@@ -137,6 +140,7 @@ const ProductCard = ({
               src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${product.base_images?.[0]}`}
               alt={translation?.name || product.name}
               fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className={`
                 object-cover
                 transition-all
@@ -153,6 +157,7 @@ const ProductCard = ({
               src={`${process.env.NEXT_PUBLIC_API_URL}/storage/${activeVariant?.colors?.images?.[0]}`}
               alt={translation?.name || product.name}
               fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className={`
                 object-cover
                 transition-all
@@ -269,7 +274,7 @@ const ProductCard = ({
       {/* ================================================================ */}
 
       <div className="flex flex-col gap-4 p-4">
-        <h1 className="font-medium">{translation?.name}</h1>
+        <h2 className="font-medium">{translation?.name || product.name}</h2>
 
         <p className="line-clamp-2 text-sm text-gray-500">
           {translation?.description}
@@ -284,7 +289,9 @@ const ProductCard = ({
 
           {productVariants.length ? (
             <div className="flex flex-col gap-1">
-              <span className="text-gray-500">{dict.variant.size}</span>
+              <label htmlFor={`size-${product.id}`} className="text-gray-500">
+                {dict.variant.size}
+              </label>
 
               <select
                 name="size"
@@ -321,6 +328,14 @@ const ProductCard = ({
                     <button
                       type="button"
                       key={item.color?.name}
+                      aria-label={`${item.color?.name ?? "Color"}${
+                        colorOutOfStock
+                          ? locale === "ar"
+                            ? " - غير متوفر"
+                            : " - Out of stock"
+                          : ""
+                      }`}
+                      aria-pressed={activeColorIndex === i}
                       onClick={() => setActiveColorIndex(i)}
                       className={`
                         rounded-full border p-[1.2px]

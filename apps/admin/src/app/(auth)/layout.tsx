@@ -4,37 +4,34 @@ import "../globals.css";
 import RTKProvider from "@/providers/RTKProvider";
 
 const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-    title: "Galal dahsbard",
-    description: "dashbord for galal store multi vendor",
+  title: "Galal dahsbard",
+  description: "dashbord for galal store multi vendor",
 };
 
 export default async function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-
-    return (
-        <html lang="en" suppressHydrationWarning>
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}
-            >
-                <RTKProvider>
-                    <main className="w-full">
-                        {children}
-                    </main>
-                </RTKProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}
+      >
+        <RTKProvider>
+          <main className="w-full">{children}</main>
+        </RTKProvider>
+      </body>
+    </html>
+  );
 }

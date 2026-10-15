@@ -3,7 +3,7 @@ import { z } from "zod";
 // ✅ Variant schema
 export const variantSchema = z
   .object({
-    id: z.coerce.string().optional() || null,
+    id: z.coerce.string().optional(),
 
     price: z.string().min(1, "Price is required"),
     stock: z.string().min(1, "Stock is required"),
@@ -84,4 +84,6 @@ export const productSchema = z
     },
   );
 
-export type ProductForm = z.infer<typeof productSchema>;
+export type ProductFormInput = z.input<typeof productSchema>;
+export type ProductForm = z.output<typeof productSchema>;
+export type VariantForm = z.output<typeof variantSchema>;

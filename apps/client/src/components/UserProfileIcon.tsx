@@ -19,8 +19,6 @@ export default function UserProfileIcon({ user, locale, dict }: any) {
     "bg-amber-600",
   ];
 
-  const color = colors[user?.name?.length % colors.length];
-
   // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

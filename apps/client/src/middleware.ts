@@ -14,10 +14,8 @@ export function middleware(req: NextRequest) {
   // =========================
   if (pathname === "/") {
     const browserLocale =
-      req.headers
-        .get("accept-language")
-        ?.split(",")[0]
-        .split("-")[0] || defaultLocale;
+      req.headers.get("accept-language")?.split(",")[0].split("-")[0] ||
+      defaultLocale;
 
     const locale = locales.includes(browserLocale)
       ? browserLocale
@@ -46,13 +44,10 @@ export function middleware(req: NextRequest) {
   // =========================
   // Protected routes
   // =========================
-  const protectedRoutes = [
-    `/${locale}/dashboard`,
-    `/${locale}/admin`,
-  ];
+  const protectedRoutes = [`/${locale}/dashboard`, `/${locale}/admin`];
 
   const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+    pathname.startsWith(route),
   );
 
   if (!refreshToken && isProtected) {
@@ -66,8 +61,7 @@ export function middleware(req: NextRequest) {
   // =========================
   if (
     refreshToken &&
-    (pathname === `/${locale}/login` ||
-      pathname === `/${locale}/register`)
+    (pathname === `/${locale}/login` || pathname === `/${locale}/register`)
   ) {
     url.pathname = `/${locale}`;
     return NextResponse.redirect(url);

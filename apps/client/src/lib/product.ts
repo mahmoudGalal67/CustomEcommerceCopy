@@ -23,6 +23,5 @@ export function groupProductVariants(product: ProductType): GroupedVariant[] {
       stock: variant.stock,
     });
   });
-  console.log(grouped)
   return Object.values(grouped);
 }

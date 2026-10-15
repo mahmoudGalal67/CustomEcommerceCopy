@@ -6,6 +6,7 @@ import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import MessageBubble from "./MessageBubble";
 import TypingBubble from "./TypingBubble";
+import { ChatDictionary, ChatMessage } from "@/types/types";
 function ChatWindow({
   messages,
   message,
@@ -15,20 +16,13 @@ function ChatWindow({
   isTyping,
   dict,
 }: {
-  messages: {
-    id: number;
-    chat_id: number;
-    message: string;
-    sender: "user" | "ai" | "admin";
-    status: "answered" | "pending";
-    is_read?: boolean;
-  }[];
+  messages: ChatMessage[];
   message: string;
   setmessage: (value: string) => void;
   onSend: () => void;
   onClose: () => void;
   isTyping: boolean;
-  dict: any;
+  dict: ChatDictionary;
 }) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {

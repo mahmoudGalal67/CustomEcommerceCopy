@@ -40,7 +40,15 @@ function Register() {
   const isSeller = watch("is_seller");
 
   const onSubmit = async (data: RegisterForm) => {
-    await registerHook(data, reset);
+    await registerHook(
+      {
+        ...data,
+        phone: data.phone ?? null,
+        store_name: data.store_name ?? null,
+      },
+      reset,
+    );
+
     router.push(`/${locale}/login`);
   };
 

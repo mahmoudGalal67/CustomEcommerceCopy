@@ -11,17 +11,10 @@ import {
 } from "@/services/chatService";
 import { getGuestToken } from "@/lib/getGuestToken";
 import { initEcho } from "@/lib/bootstrap";
+import { ChatMessage } from "@/types/types";
+import type { AppDictionary } from "@/types/types";
 
-type ChatMessage = {
-  id: number;
-  chat_id: number;
-  message: string;
-  sender: "user" | "ai" | "admin";
-  status: "answered" | "pending";
-  is_read?: boolean;
-};
-
-export default function ChatBox({ dict }: { dict: any }) {
+export default function ChatBox({ dict }: { dict: AppDictionary }) {
   const [sendMessage] = useSendMssageMutation();
   const [isTyping, setIsTyping] = useState(false);
   const [getMessages] = useGetMessagesMutation();
@@ -29,7 +22,6 @@ export default function ChatBox({ dict }: { dict: any }) {
   const [MarkALLMessagesIsreadForUserMutation] =
     useMarkALLMessagesIsreadForUserMutation();
 
-  const guestToken = getGuestToken();
   const [isOpen, setIsOpen] = useState(false);
   const [message, setmessage] = useState("");
   const [chatId, setChatId] = useState<number | null>(null);
@@ -45,7 +37,7 @@ export default function ChatBox({ dict }: { dict: any }) {
     },
   ]);
   const unreadCount = messages.filter(
-    (msg: any) => msg.sender !== "user" && msg.is_read === 0,
+    (msg) => msg.sender !== "user" && msg.is_read === false,
   ).length;
   const isOpenRef = useRef(false);
   useEffect(() => {
@@ -58,8 +50,7 @@ export default function ChatBox({ dict }: { dict: any }) {
 
     const channel = echo.channel(`chat.${chatId}`);
 
-    channel.listen(".message.sent", (e: any) => {
-      console.log(e);
+    channel.listen(".message.sent", (e: ChatMessage) => {
       if (e.sender == "user") return;
       if (!isOpenRef.current) {
         setMessages((prev) => [...prev, { ...e }]);
@@ -71,20 +62,39 @@ export default function ChatBox({ dict }: { dict: any }) {
     return () => {
       echo.leave(`chat.${chatId}`);
     };
-  }, [chatId, isOpen]);
+  }, [chatId, isOpen, MarkMessageIsreadMutation]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadMessages = async () => {
-      const res = await getMessages({
-        guest_token: guestToken,
-      }).unwrap();
-      if (res) {
-        setChatId(res[0].chat_id);
+      try {
+        const guestToken = getGuestToken();
+
+        const res = await getMessages({
+          guest_token: guestToken,
+        }).unwrap();
+
+        if (cancelled) return;
+
+        if (res.length > 0) {
+          setChatId(res[0].chat_id);
+        }
+
+        setMessages(res);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Failed to load chat messages:", error);
+        }
       }
-      setMessages(res);
     };
-    loadMessages();
-  }, []);
+
+    void loadMessages();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [getMessages]);
 
   const handleSend = async () => {
     try {
@@ -93,7 +103,7 @@ export default function ChatBox({ dict }: { dict: any }) {
       }
       setmessage("");
       setIsTyping(true);
-      setMessages((prev: any) => [
+      setMessages((prev) => [
         ...prev,
         {
           ...prev[prev.length - 1],
@@ -102,10 +112,8 @@ export default function ChatBox({ dict }: { dict: any }) {
           id: prev[prev.length - 1]?.id + 1,
         },
       ]);
-      const res: any = await sendMessage({ message, guest_token: guestToken });
-      // setChatId(res.data.message.chat_id);
+      await sendMessage({ message, guest_token: getGuestToken() });
       setIsTyping(false);
-      // setMessages((prev: any) => [...prev, res.data.message])
     } catch (err) {
       console.log(err);
     }
@@ -138,8 +146,8 @@ export default function ChatBox({ dict }: { dict: any }) {
         onClick={() => {
           setIsOpen((prev) => !prev);
           if (!isOpen) {
-            setMessages((prev: any) =>
-              prev.map((msg: any) => {
+            setMessages((prev) =>
+              prev.map((msg) => {
                 if (msg.sender != "user" && !msg.is_read) {
                   return { ...msg, is_read: true };
                 } else {

@@ -13,7 +13,6 @@ import { X, UploadCloud } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 import Loading from "@/components/loading";
 import ErrorPoup from "@/components/ErrorPoup";
 
@@ -56,7 +55,6 @@ export default function ProductForm() {
   const { data: categories } = useGetCategoriesQuery({ search: "" });
 
   const isLoading = isAddLoading || isUpdateLoading;
-  const isSuccess = isAddSuccess || isUpdateSuccess;
 
   const onSubmit = async (data: any) => {
     const convertedData = createProductFormData(data, isEdit);

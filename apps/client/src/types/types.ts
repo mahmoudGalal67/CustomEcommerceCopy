@@ -181,3 +181,52 @@ export type CartStoreActionsType = {
   removeFromCart: (product: CartItemType) => void;
   clearCart: () => void;
 };
+
+export type ChatMessage = {
+  id: number;
+  chat_id: number;
+  message: string;
+  sender: "user" | "ai" | "admin";
+  status: "answered" | "pending";
+  is_read?: boolean;
+};
+
+export type ChatDictionary = {
+  support: string;
+  message: string;
+  input: string;
+  button: string;
+  active: string;
+  typing: string;
+};
+
+export type AppDictionary = {
+  Chat: ChatDictionary;
+  Navbar: {
+    home: string;
+    products: string;
+    menu: string;
+    cart: string;
+    logo: string;
+    whishlist: string;
+    profile: string;
+    search: string;
+  };
+  Buttons: {
+    addToCart: string;
+    contactByWhatsapp: string;
+    buy: string;
+    showAllProducts: string;
+    save: string;
+    cancel: string;
+    loading: string;
+    logout: string;
+    login: string;
+    register: string;
+    signIn: string;
+    signUp: string;
+  };
+  labels: {
+    [key: string]: string;
+  };
+};

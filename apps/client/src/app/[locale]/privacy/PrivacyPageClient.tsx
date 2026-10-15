@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  AlertCircle,
-  ChevronRight,
-  FileText,
-  Package,
-  RefreshCcw,
-  UserCheck,
-} from "lucide-react";
+import { FileText } from "lucide-react";
 
 import {
   ArrowRight,
   Heart,
-  Instagram,
   PackageCheck,
   ShieldCheck,
   Sparkles,

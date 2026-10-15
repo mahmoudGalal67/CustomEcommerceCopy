@@ -6,9 +6,9 @@ const nextConfig: NextConfig = {
   basePath: "/admin",
   outputFileTracingRoot: path.join(__dirname, "../../"),
   transpilePackages: ["@shared/sections"],
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
   eslint: {
     ignoreDuringBuilds: true,
   },

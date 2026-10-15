@@ -19,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/TablePagination";
-import { useUpdateOrderStatusMutation } from "@/services/orderApi";
 import { SortAscIcon } from "lucide-react";
 import Loading from "./loading";
 
@@ -27,12 +26,13 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowSelection?: Record<string, boolean>;
-  setRowSelection?: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  setRowSelection?: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >;
   isLoading?: boolean;
   isFetching?: boolean;
   onSuccess?: () => void;
   setIsLoadingModal?: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 
 export function DataTable<TData extends { id: number }, TValue>({
@@ -42,9 +42,7 @@ export function DataTable<TData extends { id: number }, TValue>({
   setRowSelection,
   isLoading,
   isFetching,
-
 }: DataTableProps<TData, TValue>) {
-
   const table = useReactTable<TData>({
     data,
     columns,
@@ -55,8 +53,6 @@ export function DataTable<TData extends { id: number }, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     getRowId: (row) => row.id.toString(),
-
-
   });
 
   return (
@@ -69,7 +65,10 @@ export function DataTable<TData extends { id: number }, TValue>({
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   {header.column.getCanSort() && (
                     <SortAscIcon
                       onClick={header.column.getToggleSortingHandler()}
@@ -78,7 +77,13 @@ export function DataTable<TData extends { id: number }, TValue>({
                     />
                   )}
                   {
-                    <span>{header.column.getIsSorted() ? (header.column.getIsSorted() === "asc" ? " 🔼" : " 🔽") : ""}</span>
+                    <span>
+                      {header.column.getIsSorted()
+                        ? header.column.getIsSorted() === "asc"
+                          ? " 🔼"
+                          : " 🔽"
+                        : ""}
+                    </span>
                   }
                 </TableHead>
               ))}
@@ -87,7 +92,7 @@ export function DataTable<TData extends { id: number }, TValue>({
         </TableHeader>
 
         <TableBody>
-          {(isLoading || isFetching) ? (
+          {isLoading || isFetching ? (
             <TableRow>
               <TableCell colSpan={columns.length} className="p-4">
                 <Loading fullWidth />

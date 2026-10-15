@@ -24,7 +24,6 @@ const Footer = ({ dict }: { dict: any }) => {
     ar?: string;
   };
 
-  console.log(features);
   const getLocalizedText = (
     value: LocalizedText | string | null | undefined,
     locale: string,
@@ -42,7 +41,6 @@ const Footer = ({ dict }: { dict: any }) => {
 
     return value.en || value.ar || "";
   };
-  console.log(settings);
   return (
     <footer className="mt-16 rounded-lg bg-gray-800 p-8">
       <div className="flex flex-col items-center gap-10 md:flex-row md:items-start md:justify-between">

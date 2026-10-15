@@ -2,7 +2,6 @@
 
 import { PaymentFormInputs, paymentFormSchema } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
 import FormField from "./FormField";
@@ -142,7 +141,6 @@ const PaymentForm = ({
           />
           <Image src="/cash.png" alt="stripe" width={60} height={25} />
         </div>
-
       </form>
     </>
   );

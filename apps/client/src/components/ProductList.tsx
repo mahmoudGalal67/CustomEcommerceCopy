@@ -18,8 +18,13 @@ const ProductList = async ({
   locale: string;
   dict: any;
 }) => {
-  const { data: categories } = await categoriesAPi.getCategories({ locale });
-  const { data: products } = await productsAPi.getProducts(query);
+  const [categoriesResponse, productsResponse] = await Promise.all([
+    categoriesAPi.getCategories({ locale }),
+    productsAPi.getProducts(query),
+  ]);
+
+  const categories = categoriesResponse.data;
+  const products = productsResponse.data;
   return (
     <div className="w-full">
       <Categories categories={categories} />

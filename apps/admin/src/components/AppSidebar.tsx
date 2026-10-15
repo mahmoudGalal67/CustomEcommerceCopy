@@ -4,7 +4,6 @@ import {
   Home,
   Inbox,
   Calendar,
-  Search,
   Settings,
   User2,
   ChevronUp,

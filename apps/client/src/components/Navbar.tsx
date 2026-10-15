@@ -11,16 +11,11 @@ import ShoppingCartIcon from "./ShoppingCartIcon";
 import UserProfileIcon from "./UserProfileIcon";
 import ThemeToggle from "./theme-toggle";
 import LanguageSwitcher from "./LanguageSwitcher";
-import AnimatedHamburgerMenu from "./AnimatedHamburgerMenu";
 
 import { useGetUserInfo } from "@/hooks/GetUserINfo";
 import { useGetSettingsQuery } from "@/services/SettingsApi";
-import { useShowAnnouncementBarQuery } from "../services/AnnouncementBarAoi";
-import { AnnouncementMarquee } from "@shared/sections";
 
 const Navbar = ({ dict }: { dict: any }) => {
-  const { data: announcementBar } = useShowAnnouncementBarQuery(undefined);
-
   const { data: settings } = useGetSettingsQuery(undefined);
 
   useGetUserInfo();
@@ -48,7 +43,7 @@ const Navbar = ({ dict }: { dict: any }) => {
             width={180}
             height={100}
             priority
-            sizes="(max-width: 639px) 140px, 180px"
+            sizes="(max-width: 639px) 140px, (max-width: 767px) 165px, 180px"
             className="h-[52px] w-[80px] object-contain object-left sm:h-[62px] sm:w-[165px] md:h-[76px] md:w-[180px]"
           />
         </Link>
@@ -100,7 +95,6 @@ const Navbar = ({ dict }: { dict: any }) => {
               {dict.Buttons.login}
             </Link>
           )}
-          <AnimatedHamburgerMenu locale={locale} />
         </div>
       </div>
     </nav>

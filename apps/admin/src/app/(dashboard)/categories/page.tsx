@@ -1,18 +1,18 @@
 "use client";
 
-import { useGetUsersQuery, useDeleteUsersMutation } from "@/services/userApi";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useState, useMemo } from "react";
-
 
 import SuccessModal from "@/components/SuccessModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import AlertModal from "@/components/AlertModal";
 import { useDebounce } from "@/hooks/useDebounce";
 import UsersToolbar from "@/components/TableToolBar";
-import { useDeleteCategoriesMutation, useGetCategoriesQuery } from "@/services/categorySlice";
-
+import {
+  useDeleteCategoriesMutation,
+  useGetCategoriesQuery,
+} from "@/services/categorySlice";
 
 export default function PaymentsPage() {
   const [search, setSearch] = useState("");
@@ -23,21 +23,16 @@ export default function PaymentsPage() {
 
   const selectedCount = useMemo(
     () => Object.keys(rowSelection).length,
-    [rowSelection]
+    [rowSelection],
   );
 
   // 🔹 Debounce search
   const debouncedSearch = useDebounce(search, 300);
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    isError,
-    refetch,
-  } = useGetCategoriesQuery({
-    search: debouncedSearch,
-  });
+  const { data, isLoading, isFetching, isError, refetch } =
+    useGetCategoriesQuery({
+      search: debouncedSearch,
+    });
 
   const [deleteCategories] = useDeleteCategoriesMutation();
 
@@ -46,7 +41,10 @@ export default function PaymentsPage() {
 
     try {
       setShowLoading(true);
-      await deleteCategories({ ids: Object.keys(rowSelection), search }).unwrap();
+      await deleteCategories({
+        ids: Object.keys(rowSelection),
+        search,
+      }).unwrap();
       setShowSuccess(true);
       setRowSelection({});
     } finally {
@@ -58,7 +56,6 @@ export default function PaymentsPage() {
 
   return (
     <div className="px-4 py-2">
-
       {/* 🔍 Filters */}
       <UsersToolbar
         Sellectable={false}
@@ -84,9 +81,7 @@ export default function PaymentsPage() {
         onSuccess={() => setShowSuccess(true)}
       />
 
-      {isError && (
-        <p className="text-red-500 mt-2">Error loading Categories</p>
-      )}
+      {isError && <p className="text-red-500 mt-2">Error loading Categories</p>}
 
       {/* ✅ Success */}
       <SuccessModal
@@ -97,10 +92,7 @@ export default function PaymentsPage() {
       />
 
       {/* 🔄 Loading */}
-      <LoadingSpinner
-        open={showLoading}
-        onClose={() => { }}
-      />
+      <LoadingSpinner open={showLoading} onClose={() => {}} />
 
       {/* ⚠️ Alert */}
       <AlertModal

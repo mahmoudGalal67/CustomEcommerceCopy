@@ -5,7 +5,7 @@ import {
   useRegisterMutation,
 } from "@/services/authApi";
 import { useMergeCartMutation } from "@/services/cartApi";
-
+import type { LoginData, RegisterData } from "@/types/user";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 import {
@@ -38,7 +38,7 @@ export const useLogin = () => {
   const [mergeCartApi] = useMergeCartMutation();
   const [mergeChatApi] = useMergeChatMutation();
 
-  const login = async (data: any) => {
+  const login = async (data: LoginData) => {
     return handleLoginLogic(
       data,
       loginApi,
@@ -59,7 +59,7 @@ export const useLogin = () => {
 export const useRegister = () => {
   const [registerApi, { isLoading, isError, error }] = useRegisterMutation();
 
-  const registerHook = async (data: any, reset: () => void) => {
+  const registerHook = async (data: RegisterData, reset: () => void) => {
     return handleRegisterLogic(data, registerApi, reset);
   };
 

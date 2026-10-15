@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Sparkles, Star, Zap } from "lucide-react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 
@@ -179,10 +180,13 @@ export default function Hero2({
                 {featuredProductContent ? (
                   featuredProductContent
                 ) : featuredProduct.image ? (
-                  <img
+                  <Image
                     src={FeaturedImageUrl}
                     alt={String(t(featuredProduct.name))}
-                    className="h-full w-full rounded-xl object-cover drop-shadow-2xl"
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 352px, 0px"
+                    className="rounded-xl object-cover drop-shadow-2xl"
                   />
                 ) : (
                   <span className="font-display text-[10rem] font-bold leading-none tracking-tighter text-white/90 drop-shadow-[0_6px_30px_rgba(0,0,0,0.5)]">
@@ -218,10 +222,13 @@ export default function Hero2({
                 {miniProductContent ? (
                   miniProductContent
                 ) : miniProduct.image ? (
-                  <img
+                  <Image
                     src={MiniImageUrl}
                     alt={String(t(miniProduct.name))}
-                    className="h-full w-full rounded-xl object-cover drop-shadow-2xl"
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 352px, 0px"
+                    className="rounded-xl object-cover drop-shadow-2xl"
                   />
                 ) : (
                   <span className="font-display text-3xl font-bold text-white/90">

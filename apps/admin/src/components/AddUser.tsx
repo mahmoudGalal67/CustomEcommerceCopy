@@ -30,9 +30,6 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-import ErrorPoup from "@/components/ErrorPoup";
-import SuccessModal from "./SuccessModal";
-import LoadingSpinner from "./LoadingSpinner";
 import { useCreateUserMutation } from "@/services/userApi";
 
 const formSchema = z

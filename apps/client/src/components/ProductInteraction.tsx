@@ -8,7 +8,7 @@ import {
   VariantColor,
   VariantSize,
 } from "@/types/types";
-import { Loader, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Loader, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -71,7 +71,6 @@ const ProductInteraction = ({
     }
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
-  console.log(product);
   const handleQuantityChange = (type: "increment" | "decrement") => {
     if (type === "increment") {
       if (quantity >= currentStock) {

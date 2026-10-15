@@ -20,4 +20,5 @@ export interface RegisterData {
   password_confirmation: string;
   is_seller: boolean;
   store_name: string | null;
+  phone: string | null;
 }

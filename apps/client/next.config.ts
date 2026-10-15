@@ -1,10 +1,18 @@
 import path from "path";
 import type { NextConfig } from "next";
+import bundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../../"),
   transpilePackages: ["@shared/sections"],
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
@@ -48,4 +56,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
+export default withBundleAnalyzer(nextConfig);

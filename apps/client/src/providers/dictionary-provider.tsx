@@ -1,15 +1,16 @@
 "use client";
 
+import { AppDictionary } from "@/types/types";
 import { createContext, useContext } from "react";
 
-const DictionaryContext = createContext<any>(null);
+const DictionaryContext = createContext<AppDictionary | null>(null);
 
 export function DictionaryProvider({
   children,
   dictionary,
 }: {
   children: React.ReactNode;
-  dictionary: any;
+  dictionary: AppDictionary;
 }) {
   return (
     <DictionaryContext.Provider value={dictionary}>

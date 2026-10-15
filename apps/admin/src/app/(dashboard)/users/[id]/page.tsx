@@ -1,7 +1,5 @@
-'use client'
+"use client";
 
-import CardList from "@/components/CardList";
-import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,18 +23,16 @@ import ProfilePhoto from "@/components/ProfilePhoto";
 import { useGetUserByIdQuery } from "@/services/userApi";
 import React from "react";
 
-const SingleUserPage = ({ params }: {
-  params: Promise<{ id: number }>;
-}) => {
+const SingleUserPage = ({ params }: { params: Promise<{ id: number }> }) => {
   const { id } = React.use(params);
   const { data: user, isLoading, isError } = useGetUserByIdQuery(id);
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   if (isError) {
-    return <div>Error</div>
+    return <div>Error</div>;
   }
 
   return (
@@ -88,8 +84,8 @@ const SingleUserPage = ({ params }: {
                 <HoverCardContent>
                   <h1 className="font-bold mb-2">{user?.role}</h1>
                   <p className="text-sm text-muted-foreground">
-                    {user?.role} users have access to all features and can manage
-                    users.
+                    {user?.role} users have access to all features and can
+                    manage users.
                   </p>
                 </HoverCardContent>
               </HoverCard>
@@ -182,7 +178,6 @@ const SingleUserPage = ({ params }: {
         </div>
         {/* RIGHT */}
         <div className="w-full xl:w-2/3 space-y-6">
-
           {/* CHART CONTAINER */}
           <div className="bg-primary-foreground p-4 rounded-lg">
             <h1 className="text-xl font-semibold">User Activity</h1>

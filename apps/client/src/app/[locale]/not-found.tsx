@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Home, Search, ShoppingBag } from "lucide-react";
+import { Home, Search, ShoppingBag } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
