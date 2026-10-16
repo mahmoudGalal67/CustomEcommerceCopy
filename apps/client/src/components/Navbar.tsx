@@ -14,6 +14,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 
 import { useGetUserInfo } from "@/hooks/GetUserINfo";
 import { useGetSettingsQuery } from "@/services/SettingsApi";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 
 const Navbar = ({ dict }: { dict: any }) => {
   const { data: settings } = useGetSettingsQuery(undefined);
@@ -23,6 +24,7 @@ const Navbar = ({ dict }: { dict: any }) => {
   const user = useSelector((state: any) => state.auth.user);
   const params = useParams();
   const locale = (params.locale || "en") as string;
+  const isDesktop = useIsDesktop();
 
   const logoSrc = settings?.logo
     ? `${process.env.NEXT_PUBLIC_API_URL}/storage/${settings.logo}`
@@ -31,7 +33,6 @@ const Navbar = ({ dict }: { dict: any }) => {
   return (
     <nav className="relative z-5 w-full border-b border-gray-200 px-3 py-2 sm:px-5 md:px-6">
       <div className="flex min-h-14 w-full items-center justify-between gap-2 md:min-h-20">
-        {/* Logo */}
         <Link
           href={`/${locale}`}
           aria-label={settings?.site_name || "Home"}
@@ -48,54 +49,49 @@ const Navbar = ({ dict }: { dict: any }) => {
           />
         </Link>
 
-        {/* Desktop navigation */}
-        <div className="hidden min-w-0 flex-1 items-center justify-end gap-5 lg:flex">
-          <LanguageSwitcher />
-          <SearchBar dict={dict} />
-          <ThemeToggle />
-          <Bell className="h-5 w-5 shrink-0 text-text" />
+        {isDesktop === true && (
+          <>
+            <div className="min-w-0 flex-1 lg:max-w-md">
+              <SearchBar dict={dict} />
+            </div>
 
-          <Link href={`/${locale}/wishlist`} aria-label="Wishlist">
-            <Heart className="h-5 w-5 text-text" />
-          </Link>
+            <div className="flex items-center justify-end gap-5">
+              <LanguageSwitcher />
+              <ThemeToggle />
+              <Bell className="h-5 w-5 shrink-0 text-text" />
 
-          <ShoppingCartIcon locale={locale} />
+              <Link href={`/${locale}/wishlist`} aria-label="Wishlist">
+                <Heart className="h-5 w-5 text-text" />
+              </Link>
 
-          {user ? (
-            <UserProfileIcon user={user} locale={locale} dict={dict} />
-          ) : (
-            <Link href={`/${locale}/login`}>{dict.Buttons.login}</Link>
-          )}
-        </div>
+              <ShoppingCartIcon locale={locale} />
 
-        {/* Mobile and tablet actions */}
-        <div className="flex shrink-0 items-center gap-3 lg:hidden">
-          <div className="flex items-center">
+              {user ? (
+                <UserProfileIcon user={user} locale={locale} dict={dict} />
+              ) : (
+                <Link href={`/${locale}/login`}>{dict.Buttons.login}</Link>
+              )}
+            </div>
+          </>
+        )}
+
+        {isDesktop === false && (
+          <div className="flex shrink-0 items-center gap-3">
             <SearchBar dict={dict} />
-          </div>
 
-          <Link
-            href={`/${locale}/wishlist`}
-            aria-label="Wishlist"
-            className="flex shrink-0 items-center justify-center"
-          >
-            <Heart className="h-5 w-5 text-text" />
-          </Link>
-
-          <div className="flex shrink-0 items-center">
-            <ShoppingCartIcon locale={locale} />
-          </div>
-          {user ? (
-            <UserProfileIcon user={user} locale={locale} dict={dict} />
-          ) : (
-            <Link
-              className="text-sm mx-2 font-medium text-text hover:text-primary"
-              href={`/${locale}/login`}
-            >
-              {dict.Buttons.login}
+            <Link href={`/${locale}/wishlist`} aria-label="Wishlist">
+              <Heart className="h-5 w-5 text-text" />
             </Link>
-          )}
-        </div>
+
+            <ShoppingCartIcon locale={locale} />
+
+            {user ? (
+              <UserProfileIcon user={user} locale={locale} dict={dict} />
+            ) : (
+              <Link href={`/${locale}/login`}>{dict.Buttons.login}</Link>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );

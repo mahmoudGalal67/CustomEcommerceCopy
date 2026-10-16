@@ -10,7 +10,6 @@ import {
   useSendMssageMutation,
 } from "@/services/chatService";
 import { getGuestToken } from "@/lib/getGuestToken";
-import { initEcho } from "@/lib/bootstrap";
 import { ChatMessage } from "@/types/types";
 import type { AppDictionary } from "@/types/types";
 
@@ -46,23 +45,47 @@ export default function ChatBox({ dict }: { dict: AppDictionary }) {
 
   useEffect(() => {
     if (!chatId) return;
-    const echo = initEcho();
-
-    const channel = echo.channel(`chat.${chatId}`);
-
-    channel.listen(".message.sent", (e: ChatMessage) => {
-      if (e.sender == "user") return;
-      if (!isOpenRef.current) {
-        setMessages((prev) => [...prev, { ...e }]);
-      } else {
-        MarkMessageIsreadMutation({ message_id: e.id });
-        setMessages((prev) => [...prev, { ...e, is_read: true }]);
-      }
+    let active = true;
+    let echo: any;
+    import("@/lib/bootstrap").then(({ initEcho }) => {
+      if (!active) return;
+      echo = initEcho();
+      echo
+        .channel(`chat.${chatId}`)
+        .listen(".message.sent", (e: ChatMessage) => {
+          if (e.sender == "user") return;
+          if (!isOpenRef.current) {
+            setMessages((prev) => [...prev, { ...e }]);
+          } else {
+            MarkMessageIsreadMutation({ message_id: e.id });
+            setMessages((prev) => [...prev, { ...e, is_read: true }]);
+          }
+        });
     });
     return () => {
-      echo.leave(`chat.${chatId}`);
+      active = false;
+      echo?.leave(`chat.${chatId}`);
     };
-  }, [chatId, isOpen, MarkMessageIsreadMutation]);
+  }, [chatId]);
+  // useEffect(() => {
+  //   if (!chatId) return;
+  //   const echo = initEcho();
+
+  //   const channel = echo.channel(`chat.${chatId}`);
+
+  //   channel.listen(".message.sent", (e: ChatMessage) => {
+  //     if (e.sender == "user") return;
+  //     if (!isOpenRef.current) {
+  //       setMessages((prev) => [...prev, { ...e }]);
+  //     } else {
+  //       MarkMessageIsreadMutation({ message_id: e.id });
+  //       setMessages((prev) => [...prev, { ...e, is_read: true }]);
+  //     }
+  //   });
+  //   return () => {
+  //     echo.leave(`chat.${chatId}`);
+  //   };
+  // }, [chatId, isOpen, MarkMessageIsreadMutation]);
 
   useEffect(() => {
     let cancelled = false;
