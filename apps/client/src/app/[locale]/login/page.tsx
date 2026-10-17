@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
 
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +11,8 @@ import { useLogin } from "@/hooks/auth";
 import { useDictionary } from "@/providers/dictionary-provider";
 import { useGetSettingsQuery } from "@/services/SettingsApi";
 
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+
 function Login() {
   const router = useRouter();
   const { login, isLoading, isError, errorMessage } = useLogin();
@@ -19,6 +20,29 @@ function Login() {
   const locale = (params.locale || "en") as string;
   const dict = useDictionary();
   const { data: settings } = useGetSettingsQuery(undefined);
+
+  const searchParams = useSearchParams();
+
+  const redirectParam = searchParams.get("redirect");
+  const message = searchParams.get("message");
+
+  const getSafeRedirect = (path: string | null) => {
+    if (!path || !path.startsWith("/") || path.startsWith("//")) {
+      return `/${locale}`;
+    }
+
+    try {
+      const url = new URL(path, window.location.origin);
+
+      if (url.origin !== window.location.origin) {
+        return `/${locale}`;
+      }
+
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch {
+      return `/${locale}`;
+    }
+  };
 
   type loginForm = z.infer<typeof loginSchema>;
 
@@ -31,11 +55,12 @@ function Login() {
   });
 
   const onSubmit = async (data: loginForm) => {
-    await login(data);
-    if (router?.back) {
-      router.back();
-    } else {
-      router.push(`/${locale}`);
+    try {
+      await login(data);
+
+      router.replace(getSafeRedirect(redirectParam));
+    } catch {
+      // The existing login hook/form handles login errors.
     }
   };
 
@@ -64,7 +89,11 @@ function Login() {
             : "Sign in to your account"}
         </h2>
       </div>
-
+      {message && (
+        <p className="mt-4 rounded-md bg-blue-50 px-4 py-3 text-center text-sm text-blue-700">
+          {message}
+        </p>
+      )}
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div>

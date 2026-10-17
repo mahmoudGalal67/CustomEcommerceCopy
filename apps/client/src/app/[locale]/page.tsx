@@ -1,7 +1,7 @@
 import HomeSections from "@/components/HomeSections";
 import { Newsletter } from "@/components/Newsletter";
-// import ProductList from "@/components/ProductList";
-// import { getDictionary } from "@/i18n/config";
+import ProductList from "@/components/ProductList";
+import { getDictionary } from "@/i18n/config";
 import { Suspense } from "react";
 
 const Homepage = async ({
@@ -13,9 +13,9 @@ const Homepage = async ({
     locale: string;
   }>;
 }) => {
-  // const { locale } = await params;
-  // const queryParams = await searchParams;
-  // const dict = await getDictionary(locale);
+  const { locale } = await params;
+  const queryParams = await searchParams;
+  const dict = await getDictionary(locale);
   return (
     <div className="">
       <HomeSections />
@@ -39,12 +39,12 @@ const Homepage = async ({
           </section>
         }
       ></Suspense>
-      {/* <ProductList
+      <ProductList
         query={queryParams}
         params="homepage"
         locale={locale}
         dict={dict}
-      /> */}
+      />
       <Newsletter />
     </div>
   );

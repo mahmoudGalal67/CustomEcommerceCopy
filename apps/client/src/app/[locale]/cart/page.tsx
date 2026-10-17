@@ -5,16 +5,25 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import PaymentForm from "@/components/PaymentForm";
 import ShippingForm from "@/components/ShippingForm";
 import { ShippingFormInputs } from "@/types/types";
-import { useState } from "react";
 
 import { useGetCartQuery, useRemoveFromCartMutation } from "@/services/cartApi";
 import { steps } from "@/constants/contsnts";
 
 import { ArrowLeft, ArrowRight, Trash2 } from "lucide-react";
 
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { updateToken } from "@/features/auth/authSlice";
+import { refreshAccessToken } from "@/utilis/api";
+
 const CartPage = () => {
   const params = useParams();
   const locale = (params.locale || "en") as string;
+  const { user, token } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+  const [checkingAuth, setCheckingAuth] = useState(false);
+
   const [shippingForm, setShippingForm] = useState<ShippingFormInputs>();
 
   const searchParams = useSearchParams();
@@ -24,6 +33,7 @@ const CartPage = () => {
   const [removeFromCart, { error }] = useRemoveFromCartMutation();
 
   const activeStep = parseInt(searchParams.get("step") || "1");
+
   const discount = 10;
   const subtotal =
     cartItems?.items?.reduce((acc: number, item: any) => {
@@ -37,6 +47,54 @@ const CartPage = () => {
   const deleteCartItem = (id: string) => {
     removeFromCart(id).unwrap();
   };
+
+  useEffect(() => {
+    if (activeStep !== 2 && activeStep !== 3) return;
+
+    let cancelled = false;
+
+    const checkAuth = async () => {
+      if (token) return;
+
+      setCheckingAuth(true);
+
+      try {
+        // Restore the access token from the refresh-token cookie.
+        const newToken = await refreshAccessToken();
+
+        if (!newToken) {
+          throw new Error("Session expired");
+        }
+
+        if (!cancelled) {
+          dispatch(updateToken(newToken));
+        }
+      } catch {
+        if (!cancelled) {
+          const query = new URLSearchParams({
+            message:
+              locale === "ar"
+                ? "يرجى تسجيل الدخول للمتابعة إلى الشحن"
+                : "Please log in to continue to checkout",
+            redirect: `/${locale}/cart?step=${activeStep}`,
+          });
+
+          router.replace(`/${locale}/login?${query.toString()}`);
+        }
+      } finally {
+        if (!cancelled) {
+          setCheckingAuth(false);
+        }
+      }
+    };
+
+    void checkAuth();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeStep, token, dispatch, locale, router]);
+
   if (isLoading)
     return (
       <div className="text-center p-16 text-3xl">
@@ -66,8 +124,15 @@ const CartPage = () => {
 
       return stock <= 0 || item.quantity > stock;
     }) ?? false;
-  console.log(cartItems);
-
+  if ((activeStep === 2 || activeStep === 3) && checkingAuth) {
+    return (
+      <div className="p-16 text-center">
+        {locale === "ar"
+          ? "جارٍ التحقق من تسجيل الدخول..."
+          : "Checking authentication..."}
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-8 items-center justify-center mt-12">
       {/* TITLE */}
@@ -103,6 +168,7 @@ const CartPage = () => {
       {/* STEPS & DETAILS */}
       <div className="w-full flex flex-col lg:flex-row gap-16">
         {/* STEPS */}
+
         <div className="w-full lg:w-7/12 shadow-lg border-1 border-gray-100 p-8 rounded-lg flex flex-col gap-8">
           {activeStep === 1 ? (
             cartItems?.items.map((item: any) => (
@@ -333,11 +399,22 @@ const CartPage = () => {
 
               <button
                 disabled={hasStockIssue}
-                onClick={() =>
+                onClick={() => {
+                  if (!user || !token) {
+                    router.push(
+                      `/${locale}/login?message=${encodeURIComponent(
+                        locale === "ar"
+                          ? "يرجى تسجيل الدخول للمتابعة إلى الشحن"
+                          : "Please log in to continue to shipping",
+                      )}&redirect=${encodeURIComponent(`/${locale}/cart?step=2`)}`,
+                    );
+                    return;
+                  }
+
                   router.push(`/${locale}/cart?step=2`, {
                     scroll: false,
-                  })
-                }
+                  });
+                }}
                 className="
         flex w-full items-center justify-center gap-2
         rounded-lg p-2
