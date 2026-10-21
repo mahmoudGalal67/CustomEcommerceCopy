@@ -54,6 +54,7 @@ Route::get('categories', [CategoryController::class, 'index']);
 
 
 
+Route::get('products/all', [ProductController::class, 'showAll']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 
 

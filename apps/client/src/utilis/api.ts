@@ -18,6 +18,7 @@ export const siteInfoApi = {
 // products
 export const productsAPi = {
   getProducts: (params = {}) => api.get("/products", { params }),
+  getAllProducts: () => api.get("/products/all"),
   getProductDetials: ({ id, locale }: { id: string; locale: "en" | "ar" }) =>
     api.get(`/products/${id}?locale=${locale}`),
 };
