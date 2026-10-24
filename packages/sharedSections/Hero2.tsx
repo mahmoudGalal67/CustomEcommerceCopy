@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowRight, Sparkles, Star, Zap } from "lucide-react";
 import Image from "next/image";
 

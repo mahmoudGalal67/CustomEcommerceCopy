@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { Pagination, Navigation } from "swiper/modules";
 
 interface LocalizedText {
   en?: string;
@@ -45,11 +45,7 @@ export default function Banner({
       className={isEditable ? "pointer-events-none" : "my-2"}
     >
       <Swiper
-        modules={[Autoplay, Pagination, Navigation]}
-        autoplay={{
-          delay: 4000,
-          disableOnInteraction: false,
-        }}
+        modules={[Pagination, Navigation]}
         pagination={{ clickable: true }}
         navigation
         loop
@@ -70,7 +66,6 @@ export default function Banner({
                     fill
                     sizes="100vw"
                     priority={index === 0}
-                    loading={index === 0 ? undefined : "lazy"}
                     className="object-cover object-center"
                   />
                 )}
