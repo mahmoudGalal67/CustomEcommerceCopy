@@ -17,6 +17,7 @@ interface BannerProps {
   isEditable?: boolean;
   apiUrl?: string;
   locale?: string;
+  priority?: boolean;
 }
 
 export default function Banner({
@@ -24,6 +25,7 @@ export default function Banner({
   isEditable,
   apiUrl = "",
   locale = "en",
+  priority = false,
 }: BannerProps) {
   const lang = locale === "ar" ? "ar" : "en";
 
@@ -52,7 +54,7 @@ export default function Banner({
             alt={t(activeslide.title) || "Promotional banner"}
             fill
             sizes="100vw"
-            loading={"lazy"}
+            priority={priority}
             className="object-cover object-center"
           />
         )}

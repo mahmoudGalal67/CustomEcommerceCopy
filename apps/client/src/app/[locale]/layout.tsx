@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { getDictionary } from "@/i18n/config";
 import SiteTheme from "@/components/site-theme";
 import ChatBoxLazy from "@/components/chatBot/ChatBoxLazy";
+import LazyToast from "@/components/LazyToast";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -70,7 +71,7 @@ export default async function RootLayout({
             </SiteTheme>
           </ThemeProvider>
         </Providers>
-        <ToastContainer position="bottom-right" />
+        <LazyToast />
       </body>
     </html>
   );

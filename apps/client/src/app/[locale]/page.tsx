@@ -1,7 +1,6 @@
 import AllProductList from "@/components/AllProductList";
 import HomeSections from "@/components/HomeSections";
 import { Newsletter } from "@/components/Newsletter";
-import ProductList from "@/components/ProductList";
 import { getDictionary } from "@/i18n/config";
 import { Suspense } from "react";
 
