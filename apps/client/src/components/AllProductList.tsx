@@ -12,10 +12,13 @@ const AllProductList = async ({
   locale: string;
   dict: any;
 }) => {
-  const allproductsResponse = await productsAPi.getAllProducts();
-
-  const products = allproductsResponse.data;
-  console.log("all products", products);
+  let products: any[] = [];
+  try {
+    const res = await productsAPi.getAllProducts();
+    products = res.data?.data ?? [];
+  } catch {
+    // API down: render an empty list instead of crashing the page
+  }
   return (
     <div className="w-full">
       {/* heading */}
@@ -43,7 +46,7 @@ const AllProductList = async ({
           className="group gap-1 rounded-full border-border/60 hover:border-primary/50"
         >
           <Link
-            href={`${locale}/products`}
+            href={`/${locale}/products`}
             className="px-7 py-3 text-base font-semibold"
           >
             {dict.Buttons.showAllProducts}
@@ -54,7 +57,7 @@ const AllProductList = async ({
         </Button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-12">
-        {products?.data.map((product: any) => (
+        {products?.map((product: any) => (
           <SimpleProductCard
             key={product.id}
             product={product}

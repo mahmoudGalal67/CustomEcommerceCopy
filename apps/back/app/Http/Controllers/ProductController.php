@@ -14,6 +14,7 @@ use App\Models\Variant;
 use App\Models\VariantImage;
 use Illuminate\Support\Facades\Storage;
 use App\Services\KnowledgeBaseService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
@@ -194,13 +195,19 @@ class ProductController extends Controller
             $query->paginate($limit)
         );
     }
-public function showAll()
+// ProductController
+public function showAll(Request $request)
 {
-    $products = Product::with('translations')
-        ->latest()
-        ->paginate(10);
+    $page = (int) $request->get('page', 1);
 
-    return response()->json($products);
+    return response()->json(
+        Cache::remember("products:all:$page", 60, fn () =>
+            Product::with('translations')
+                ->where('is_active', true)   // showAll currently returns inactive products too
+                ->latest()
+                ->simplePaginate(10)         // skips the extra COUNT(*) query
+        )
+    );
 }
     public function Dashboardindex(Request $request)
     {
