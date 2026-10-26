@@ -1,6 +1,4 @@
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
 interface LocalizedText {
   en?: string;
@@ -49,36 +47,17 @@ export default function Banner({
       lang={lang}
       className={isEditable ? "pointer-events-none" : "my-2"}
     >
-      <Swiper
-        modules={[Autoplay, Pagination, Navigation]}
-        autoplay={{
-          delay: 4000,
-          disableOnInteraction: false,
-        }}
-        pagination={{ clickable: true }}
-        navigation
-        loop
-        className="h-[400px] w-full md:h-[500px]"
-      >
-        {slides.map((slide, index) => {
-          const imageSrc = slide.image?.startsWith("http")
-            ? slide.image
-            : `${apiUrl}${slide.image}`;
-
-          return (
-            <SwiperSlide key={slide.id}>
-              <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-gray-900 text-white">
-                {imageSrc && (
-                  <Image
-                    src={imageSrc}
-                    alt={t(slide.title) || "Promotional banner"}
-                    fill
-                    sizes="100vw"
-                    priority={index === 0}
-                    loading={index === 0 ? undefined : "lazy"}
-                    className="object-cover object-center"
-                  />
-                )}
+      <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-gray-900 text-white">
+        {imageSrc && (
+          <Image
+            src={imageSrc}
+            alt={t(activeslide.title) || "Promotional banner"}
+            fill
+            sizes="100vw"
+            priority={priority}
+            className="object-cover object-center"
+          />
+        )}
 
         {/* Bottom cinematic gradient */}
         <div

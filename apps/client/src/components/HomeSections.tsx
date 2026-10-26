@@ -1,6 +1,5 @@
 import Banner from "@/components/section-types/Banner";
 import Hero from "@/components/section-types/Hero";
-import sliderFeaturedProducts from "@/components/section-types/SliderFeaturedProducts";
 import CountDownOffers from "@/components/section-types/CountDownOffers";
 
 import { type FC } from "react";
@@ -21,7 +20,6 @@ type SectionType =
   | "hero"
   | "hero2"
   | "banner"
-  | "sliderFeaturedProducts"
   | "CountDownOffers"
   | "CategorySecation"
   | "brandMarquee"
@@ -44,7 +42,6 @@ const MAP: Record<SectionType, FC<any>> = {
   hero: Hero,
   hero2: Hero2,
   banner: Banner,
-  sliderFeaturedProducts: sliderFeaturedProducts,
   CountDownOffers: CountDownOffers,
   CategorySecation: CategorySecation,
   brandMarquee: ClientBrands,
