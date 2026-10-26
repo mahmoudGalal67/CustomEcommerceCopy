@@ -643,17 +643,13 @@ button.disabled {
   border: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
 }
 
-/* Temporary Lighthouse diagnostic — remove after testing */
-@media (prefers-reduced-motion: no-preference) {
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .background-orb {
+    display: none;
+  }
+  .particle-background,
   .particle-background::before,
-  .particle-background::after,
-  .background-orb,
-  .hero-background::after {
+  .particle-background::after {
     animation: none !important;
   }
-}
-
-.main-content {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }

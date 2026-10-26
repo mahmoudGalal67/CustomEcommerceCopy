@@ -44,7 +44,7 @@ export default async function RootLayout({
         <Providers>
           <ThemeProvider>
             <SiteTheme>
-              <div className="particle-background min-h-screen">
+              <div className="particle-background min-h-screen md:block">
                 <div className="background-orb orb-1" />
                 <div className="background-orb orb-2" />
                 <div className="background-orb orb-3" />
