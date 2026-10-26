@@ -1,93 +1,50 @@
 "use client";
 
 import * as React from "react";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Mail,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 import { useSubscribeNewsletterMutation } from "@/services/newsletterSlice";
 
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-type NewsletterFormData = {
-  email: string;
-};
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function Newsletter() {
-  const [email, setEmail] = React.useState("");
-  const [submitted, setSubmitted] = React.useState(false);
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const params = useParams();
   const locale = (params.locale || "en") as string;
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setError,
-    formState: { errors },
-  } = useForm<NewsletterFormData>();
-
   const [subscribeNewsletter, { isLoading }] = useSubscribeNewsletterMutation();
 
-  const [successMessage, setSuccessMessage] = useState("");
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSuccess(false);
+    const value = email.trim();
 
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    if (!successMessage && !errorMessage) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setSuccessMessage("");
-      setErrorMessage("");
-    }, 4000);
-
-    return () => clearTimeout(timer);
-  }, [successMessage, errorMessage]);
-
-  const onSubmit = async (data: NewsletterFormData) => {
-    setSuccessMessage("");
-    setErrorMessage("");
-
-    try {
-      const response = await subscribeNewsletter(data).unwrap();
-
-      reset();
-
-      setSuccessMessage(
-        response.message ||
-          (locale === "ar"
-            ? "تم الاشتراك في النشرة البريدية بنجاح."
-            : "You have been subscribed successfully."),
-      );
-    } catch (error: any) {
-      console.error("Newsletter subscription error:", error);
-
-      if (error?.data?.errors?.email) {
-        setError("email", {
-          type: "server",
-          message: error.data.errors.email[0],
-        });
-
-        return;
-      }
-
-      setErrorMessage(
+    if (!EMAIL_RE.test(value)) {
+      setError(
         locale === "ar"
           ? "حدث خطأ أثناء الاشتراك. حاول مرة أخرى."
           : "Something went wrong. Please try again.",
-      );
+      ); // use your existing Arabic/English text here
+      return;
     }
-  };
+    setError("");
+
+    try {
+      await subscribeNewsletter({ email: value }).unwrap();
+      setSuccess(true);
+      setEmail("");
+    } catch (err: any) {
+      setError(err?.data?.message ?? "Something went wrong, please try again");
+    }
+  }
 
   return (
     <section className="mx-auto px-4 py-16 sm:px-6 lg:px-8">
@@ -110,27 +67,31 @@ export function Newsletter() {
               : "Join 50,000+ members for early access to releases, member-only pricing, and 10% off your first order."}
           </p>
 
-          {successMessage && (
+          {success && (
             <Alert className="border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400">
               <CheckCircle2 className="h-4 w-4" />
 
-              <AlertDescription>{successMessage}</AlertDescription>
+              <AlertDescription>
+                {locale === "ar"
+                  ? "تم الاشتراك بنجاح!"
+                  : "You've successfully subscribed!"}
+              </AlertDescription>
             </Alert>
           )}
 
-          {errorMessage && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-
-              <AlertDescription>{errorMessage}</AlertDescription>
-            </Alert>
-          )}
+          {error && <p role="alert">{error}</p>}
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit}
+            noValidate
             className="mx-auto group mt-6 flex max-w-md flex-col gap-3 sm:flex-row"
           >
             <Input
               type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
               placeholder={
                 locale === "ar" ? "أدخل بريدك الإلكتروني" : "Enter your email"
               }
@@ -138,21 +99,6 @@ export function Newsletter() {
             bg-background/60 px-5 text-sm outline-none transition-colors
             placeholder:text-muted-foreground focus:border-primary focus:ring-2
             focus:ring-primary/30"
-              {...register("email", {
-                required:
-                  locale === "ar"
-                    ? "البريد الإلكتروني مطلوب"
-                    : "Email is required",
-
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-
-                  message:
-                    locale === "ar"
-                      ? "أدخل بريدًا إلكترونيًا صالحًا"
-                      : "Enter a valid email address",
-                },
-              })}
             />
 
             <Button
@@ -176,11 +122,6 @@ export function Newsletter() {
               />
             </Button>
           </form>
-          {errors.email && (
-            <p className="mt-1 text-sm text-destructive">
-              {errors.email.message}
-            </p>
-          )}
 
           <p className="mt-4 text-xs text-muted-foreground">
             {locale == "ar"
