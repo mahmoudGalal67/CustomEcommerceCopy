@@ -10,9 +10,9 @@ import { DictionaryProvider } from "@/providers/dictionary-provider";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { getDictionary } from "@/i18n/config";
-import ScrollButton from "@/components/ScrollButton";
 import SiteTheme from "@/components/site-theme";
-import ChatBox from "@/components/chatBot/ChatBox";
+import ChatBoxLazy from "@/components/chatBot/ChatBoxLazy";
+import LazyToast from "@/components/LazyToast";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: "Glalal Store is the best place to find the best Shoes",
 };
 
-export default async function ootLayout({
+export default async function RootLayout({
   children,
   params,
 }: Readonly<{
@@ -63,16 +63,15 @@ export default async function ootLayout({
                   <DictionaryProvider dictionary={dict}>
                     <Navbar dict={dict} />
                     {children}
-                    <Footer dict={dict} />
-                    <ChatBox dict={dict} />
-                    <ScrollButton />
+                    <Footer locale={locale} />
+                    <ChatBoxLazy dict={dict} />
                   </DictionaryProvider>
                 </div>
               </div>
             </SiteTheme>
           </ThemeProvider>
         </Providers>
-        <ToastContainer position="bottom-right" />
+        <LazyToast />
       </body>
     </html>
   );

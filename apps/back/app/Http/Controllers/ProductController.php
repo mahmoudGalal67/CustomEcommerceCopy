@@ -194,6 +194,14 @@ class ProductController extends Controller
             $query->paginate($limit)
         );
     }
+public function showAll()
+{
+    $products = Product::with('translations')
+        ->latest()
+        ->paginate(10);
+
+    return response()->json($products);
+}
     public function Dashboardindex(Request $request)
     {
         $locale = 'en';

@@ -224,8 +224,7 @@ export default function Hero2({
                     src={MiniImageUrl}
                     alt={String(t(miniProduct.name))}
                     fill
-                    priority
-                    sizes="(min-width: 1024px) 352px, 0px"
+                    sizes="(min-width: 1024px) 176px, 0px"
                     className="rounded-xl object-cover drop-shadow-2xl"
                   />
                 ) : (

@@ -63,12 +63,12 @@ async function HomeSections() {
 
   return (
     <>
-      {Home.sections?.map((s: BaseSection) => {
+      {Home.sections?.map((s: BaseSection, i: number) => {
         const Component = MAP[s.type];
 
         if (!Component) return null;
 
-        return <Component key={s.id} {...s.props} />;
+        return <Component key={s.id} {...s.props} priority={i === 0} />;
       })}
     </>
   );

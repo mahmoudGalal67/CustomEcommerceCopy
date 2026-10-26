@@ -19,6 +19,7 @@ export default defineConfig({
 
   resolve: {
     alias: {
+      "next/image": path.resolve(__dirname, "./src/shims/next-image.tsx"),
       "@": path.resolve(__dirname, "./src"),
       "@shared/sections": path.resolve(
         __dirname,

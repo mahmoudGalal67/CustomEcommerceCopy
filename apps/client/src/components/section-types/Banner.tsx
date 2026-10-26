@@ -11,6 +11,7 @@ export default function ClientBanner({ slides }: any) {
       slides={slides}
       locale={locale}
       apiUrl={process.env.NEXT_PUBLIC_URL}
+      priority={true}
     />
   );
 }

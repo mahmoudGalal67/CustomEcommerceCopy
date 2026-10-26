@@ -54,6 +54,27 @@ export type ProductType = {
     description: string;
   }[];
 };
+export type SimpleProductType = {
+  id: string | number;
+  seller_id: string | number;
+  name: string;
+  slug: string;
+  description: string;
+  base_price?: number;
+  stock?: number;
+  is_featured: boolean;
+  is_active: boolean;
+  seller?: {
+    id: string | number;
+    phone: string;
+  };
+  base_images?: string[];
+  translations: {
+    locale: string;
+    name: string;
+    description: string;
+  }[];
+};
 
 export type categoryType = {
   id: number;

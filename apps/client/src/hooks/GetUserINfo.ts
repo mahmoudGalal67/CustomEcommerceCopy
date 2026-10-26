@@ -1,24 +1,45 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { updateUser } from "@/features/auth/authSlice";
-import { userInfoAPi } from "@/utilis/api";
+"use client";
+
+import { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { updateToken, updateUser, logout } from "@/features/auth/authSlice";
+import { userInfoAPi, refreshAccessToken } from "@/utilis/api";
+import type { RootState } from "@/store/store";
 
 export function useGetUserInfo(auto = true) {
   const dispatch = useDispatch();
 
-  const getUser = async () => {
+  const { user, token } = useSelector((state: RootState) => state.auth);
+
+  const getUser = useCallback(async () => {
     try {
+      let accessToken = token;
+
+      // Redux loses the access token after a browser refresh.
+      if (!accessToken) {
+        accessToken = await refreshAccessToken();
+
+        if (!accessToken) {
+          dispatch(logout());
+          return;
+        }
+
+        dispatch(updateToken(accessToken));
+      }
+
       const res = await userInfoAPi.getUserInfoAPis();
       dispatch(updateUser(res.data));
-    } catch (e) {
-      console.log("User fetch error:", e);
+    } catch {
+      // Don't log out on every network error.
     }
-  };
+  }, [token, dispatch]);
 
-  // Auto fetch on mount
   useEffect(() => {
-    if (auto) getUser();
-  }, []);
+    if (auto && !user) {
+      void getUser();
+    }
+  }, [auto, user, getUser]);
 
   return { getUser };
 }

@@ -15,12 +15,10 @@
     "@tiptap/extension-text-align": "^3.31.3",
     "@tiptap/react": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
+    "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^14.3.0",
     "lucide-react": "^1.47.0",
     "radix-ui": "^1.6.7",
     "tslib": "^2.8.1"
-  },
-  "devDependencies": {
-    "@tailwindcss/oxide-win32-x64-msvc": "^4.3.3",
-    "lightningcss-win32-x64-msvc": "^1.32.0"
   }
 }

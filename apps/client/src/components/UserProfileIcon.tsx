@@ -45,7 +45,7 @@ export default function UserProfileIcon({ user, locale, dict }: any) {
 
   const hnadleLogout = async () => {
     logOutrHook();
-    router.push(`${locale}/`);
+    router.push(`/${locale}`);
   };
 
   return (
