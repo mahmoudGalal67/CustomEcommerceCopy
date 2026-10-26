@@ -1,10 +1,10 @@
 "use client";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+// import { Swiper, SwiperSlide } from "swiper/react";
+// import { Autoplay, Pagination } from "swiper/modules";
 
 import { useGetProductsByNamesOrIdsQuery } from "@/services/ProductsApi";
-import Image from "next/image";
+// import Image from "next/image";
 
 export default function featuredSliderProducts({
   products,
@@ -24,7 +24,7 @@ export default function featuredSliderProducts({
             {title}
           </h2>
 
-          {slider ? (
+          {/* {slider ? (
             <Swiper
               modules={[Autoplay, Pagination]}
               autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -126,7 +126,7 @@ export default function featuredSliderProducts({
                 </div>
               ))}
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </section>
