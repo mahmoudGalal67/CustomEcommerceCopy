@@ -1,16 +1,30 @@
+import dynamic from "next/dynamic";
+import { type ComponentType } from "react";
+import { PagesApi } from "@/utilis/api";
+
+// above the fold: keep static
 import Banner from "@/components/section-types/Banner";
 import Hero from "@/components/section-types/Hero";
-import CountDownOffers from "@/components/section-types/CountDownOffers";
-
-import { type FC } from "react";
-import CategorySecation from "@/components/section-types/CategorySection";
-import { PagesApi } from "@/utilis/api";
 import Hero2 from "@/components/section-types/Hero2";
-import ClientBrands from "@/components/section-types/Brands";
-import ClientFeatures from "@/components/section-types/Features";
-import GeneralCountdownOffer from "@/components/section-types/GeneralCountDownOffers";
-import ClientTestimonials from "@/components/section-types/Testimonials";
-import Client2ColumnRichText from "@/components/section-types/ClientRichText";
+
+// below the fold: loaded only when the page actually contains them
+const CountDownOffers = dynamic(
+  () => import("@/components/section-types/CountDownOffers"),
+);
+const CategorySection = dynamic(
+  () => import("@/components/section-types/CategorySection"),
+);
+const Brands = dynamic(() => import("@/components/section-types/Brands"));
+const Features = dynamic(() => import("@/components/section-types/Features"));
+const GeneralCountdownOffer = dynamic(
+  () => import("@/components/section-types/GeneralCountDownOffers"),
+);
+const Testimonials = dynamic(
+  () => import("@/components/section-types/Testimonials"),
+);
+const TwoColumnRichText = dynamic(
+  () => import("@/components/section-types/ClientRichText"),
+);
 
 /* ------------------------------------------------------------------ */
 /* Types */
@@ -34,23 +48,18 @@ interface BaseSection {
   props: Record<string, any>;
 }
 
-/* ------------------------------------------------------------------ */
-/* Section map */
-/* ------------------------------------------------------------------ */
-
-const MAP: Record<SectionType, FC<any>> = {
+const MAP: Record<SectionType, ComponentType<any>> = {
   hero: Hero,
   hero2: Hero2,
   banner: Banner,
   CountDownOffers: CountDownOffers,
-  CategorySecation: CategorySecation,
-  brandMarquee: ClientBrands,
-  features: ClientFeatures,
+  CategorySecation: CategorySection,
+  brandMarquee: Brands,
+  features: Features,
   generalCountdownOffers: GeneralCountdownOffer,
-  testimonials: ClientTestimonials,
-  twoColumnRichText: Client2ColumnRichText,
+  testimonials: Testimonials,
+  twoColumnRichText: TwoColumnRichText,
 };
-
 /* ------------------------------------------------------------------ */
 /* Component */
 /* ------------------------------------------------------------------ */

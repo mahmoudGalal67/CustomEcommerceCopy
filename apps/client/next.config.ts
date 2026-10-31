@@ -12,8 +12,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   experimental: {
-    optimizePackageImports: ["radix-ui", "framer-motion", "lucide-react"],
-    inlineCss: true,
+    optimizePackageImports: ["radix-ui", "lucide-react"],
+    // inlineCss: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
