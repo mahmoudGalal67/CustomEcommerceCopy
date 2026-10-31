@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { useGetProductsByNamesOrIdsQuery } from "@/services/ProductsApi";
 
 const useCountdown = (endTime: string) => {
@@ -58,24 +57,12 @@ export default function CountdownOffers({ offers, title, apiUrl }: any) {
     ids: productIds,
   });
 
-  /*
-   * Only keep offers whose product still exists.
-   *
-   * If the original product was deleted,
-   * it won't exist in filteredProducts,
-   * so its offer will automatically disappear.
-   */
   const validOffers =
     offers?.filter((offer: any) =>
       filteredProducts?.some(
         (product: any) => product?.id === offer?.offerProduct,
       ),
     ) || [];
-
-  // Don't render the section if there are no valid offers
-  // if (!validOffers.length) {
-  //   return null;
-  // }
 
   return (
     <section className="my-5 bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-12">
@@ -107,11 +94,7 @@ export default function CountdownOffers({ offers, title, apiUrl }: any) {
                 : "https://via.placeholder.com/400x300?text=No+Image";
 
             return (
-              <motion.div
-                key={offer.id}
-                whileHover={{ scale: 1.05 }}
-                className="rounded-2xl"
-              >
+              <div key={offer.id} className="countdown-offer-card rounded-2xl">
                 <Card className="overflow-hidden shadow-lg">
                   <img
                     src={image}
@@ -139,11 +122,27 @@ export default function CountdownOffers({ offers, title, apiUrl }: any) {
                     <Button className="w-full">Buy Now</Button>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
         </div>
       </div>
+
+      <style jsx>{`
+        .countdown-offer-card {
+          transition: transform 200ms ease;
+        }
+
+        .countdown-offer-card:hover {
+          transform: scale(1.05);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .countdown-offer-card {
+            transition: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }

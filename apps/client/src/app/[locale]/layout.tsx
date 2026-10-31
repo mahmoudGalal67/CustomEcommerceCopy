@@ -14,6 +14,8 @@ import SiteTheme from "@/components/site-theme";
 import ChatBoxLazy from "@/components/chatBot/ChatBoxLazy";
 import LazyToast from "@/components/LazyToast";
 
+import { GoogleAnalytics } from "@next/third-parties/google";
+
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
@@ -63,6 +65,7 @@ export default async function RootLayout({
                   <DictionaryProvider dictionary={dict}>
                     <Navbar dict={dict} />
                     {children}
+                    <GoogleAnalytics gaId="G-FNC08KTVQP" />
                     <Footer locale={locale} />
                     <ChatBoxLazy dict={dict} />
                   </DictionaryProvider>
