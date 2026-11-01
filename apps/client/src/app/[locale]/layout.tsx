@@ -14,7 +14,7 @@ import SiteTheme from "@/components/site-theme";
 import ChatBoxLazy from "@/components/chatBot/ChatBoxLazy";
 import LazyToast from "@/components/LazyToast";
 
-import { GoogleAnalytics } from "@next/third-parties/google";
+import Analytics from "@/components/Analytics";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -41,6 +41,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={cn("font-sans", geist.variable)}
     >
+      <Analytics />
       <body className={`antialiased min-h-screen`}>
         {/* <IntroLoader logo="/images/about-shoes.jpg" /> */}
         <Providers>
@@ -65,7 +66,7 @@ export default async function RootLayout({
                   <DictionaryProvider dictionary={dict}>
                     <Navbar dict={dict} />
                     {children}
-                    <GoogleAnalytics gaId="G-FNC08KTVQP" />
+
                     <Footer locale={locale} />
                     <ChatBoxLazy dict={dict} />
                   </DictionaryProvider>

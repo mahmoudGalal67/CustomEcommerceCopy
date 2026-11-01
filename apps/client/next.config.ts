@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["radix-ui", "lucide-react"],
-    // inlineCss: true,
+    inlineCss: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
