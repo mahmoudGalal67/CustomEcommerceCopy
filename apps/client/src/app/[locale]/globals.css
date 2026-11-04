@@ -251,7 +251,7 @@ button.disabled {
 }
 
 .animate-chat-shake {
-  animation: chat-shake 0.6s ease-in-out infinite;
+  animation: chat-shake 0.6s ease-in-out 4;
 }
 
 /* ========================================
@@ -287,7 +287,6 @@ button.disabled {
     radial-gradient(circle at 35% 45%, oklch(0.95 0 0 / 0.8), transparent 30%),
     radial-gradient(circle at 75% 45%, oklch(0.75 0 0 / 0.12), transparent 30%);
 
-  filter: blur(40px);
   pointer-events: none;
 }
 
@@ -409,23 +408,6 @@ button.disabled {
   animation: hero-particles 8s ease-in-out infinite alternate;
 }
 
-@keyframes hero-particles {
-  0% {
-    transform: translate3d(0, 0, 0);
-    opacity: 0.75;
-  }
-
-  50% {
-    transform: translate3d(0, -4px, 0);
-    opacity: 0.9;
-  }
-
-  100% {
-    transform: translate3d(2px, 3px, 0);
-    opacity: 0.75;
-  }
-}
-
 /* =========================================
    PARTICLES
    ========================================= */
@@ -438,8 +420,6 @@ button.disabled {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-
-  /* IMPORTANT: don't use z-index: -1 */
   z-index: 0;
 
   background:
@@ -456,16 +436,13 @@ button.disabled {
     var(--background);
 }
 
-/* =========================================================
-   PARTICLE FIELD
-   ========================================================= */
-
+/* Dot field: same look, now static (it used to drift) */
 .particle-background::before {
   content: "";
   z-index: -1;
-
   position: absolute;
   inset: -100px;
+  pointer-events: none;
 
   background-image:
     radial-gradient(
@@ -478,30 +455,22 @@ button.disabled {
       color-mix(in srgb, var(--primary) 20%, transparent) 0 1px,
       transparent 1.5px
     );
-
   background-size:
     70px 70px,
     120px 120px;
-
   background-position:
     0 0,
     40px 60px;
-
   opacity: 0.45;
-
-  animation: ecommerce-particles 35s linear infinite;
 }
 
-/* =========================================================
-   COLOR / LIGHT EFFECT
-   ========================================================= */
-
+/* Colour glow: same gradients, no blur(70px), no animation */
 .particle-background::after {
   content: "";
-
   position: absolute;
   z-index: -1;
   inset: -20%;
+  pointer-events: none;
 
   background:
     radial-gradient(
@@ -519,137 +488,82 @@ button.disabled {
       color-mix(in srgb, var(--primary) 8%, transparent),
       transparent 28%
     );
-
-  filter: blur(70px);
-
   opacity: 0.8;
-
-  animation: ecommerce-glow 18s ease-in-out infinite alternate;
 }
 
-/* =========================================================
-   PARTICLE ANIMATION
-   ========================================================= */
-
-@keyframes ecommerce-particles {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  50% {
-    transform: translate3d(30px, -20px, 0);
-  }
-
-  100% {
-    transform: translate3d(70px, 60px, 0);
-  }
-}
-
-/* =========================================================
-   GLOW ANIMATION
-   ========================================================= */
-
-@keyframes ecommerce-glow {
-  0% {
-    transform: scale(1) translate3d(0, 0, 0);
-  }
-
-  50% {
-    transform: scale(1.08) translate3d(30px, -20px, 0);
-  }
-
-  100% {
-    transform: scale(1.03) translate3d(-20px, 30px, 0);
-  }
-}
-
-/* =========================================================
-   FLOATING GLOW ORBS
-   ========================================================= */
-
+/* Orbs: a soft gradient replaces filter: blur(100px) + box-shadow.
+   Sizes and offsets were recalculated so they sit where they used to. */
 .background-orb {
   position: absolute;
-
   border-radius: 9999px;
-
   pointer-events: none;
-
-  filter: blur(100px);
-
-  opacity: 0.14;
-
-  animation: ecommerce-orb 14s ease-in-out infinite alternate;
+  background: radial-gradient(
+    circle closest-side,
+    color-mix(in srgb, var(--primary) 13%, transparent),
+    transparent
+  );
 }
 
 .orb-1 {
-  width: 420px;
-  height: 420px;
-
-  left: -180px;
+  width: 640px;
+  height: 640px;
+  left: -290px;
   top: 20%;
-
-  background: var(--primary);
-
-  box-shadow: 0 0 120px color-mix(in srgb, var(--primary) 50%, transparent);
 }
 
 .orb-2 {
-  width: 360px;
-  height: 360px;
-
-  right: -160px;
+  width: 560px;
+  height: 560px;
+  right: -260px;
   top: 40%;
-
-  background: var(--primary);
-
-  box-shadow: 0 0 120px color-mix(in srgb, var(--primary) 45%, transparent);
-
-  animation-delay: -5s;
 }
 
 .orb-3 {
-  width: 280px;
-  height: 280px;
-
-  left: 45%;
-  bottom: -180px;
-
-  background: var(--primary);
-
-  opacity: 0.08;
-
-  animation-delay: -8s;
+  width: 440px;
+  height: 440px;
+  left: calc(45% - 80px);
+  bottom: -260px;
+  background: radial-gradient(
+    circle closest-side,
+    color-mix(in srgb, var(--primary) 7%, transparent),
+    transparent
+  );
 }
 
 @keyframes ecommerce-orb {
   from {
     transform: translate3d(0, 0, 0) scale(1);
   }
-
   to {
     transform: translate3d(35px, -25px, 0) scale(1.12);
   }
 }
-.main-content {
-  position: relative;
 
-  background: color-mix(in srgb, var(--background) 82%, transparent);
-
-  box-shadow: 0 20px 80px color-mix(in srgb, var(--foreground) 5%, transparent);
-
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+/* Orbs only move on desktop, and never for "reduce motion" users */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .background-orb {
+    will-change: transform;
+    animation: ecommerce-orb 14s ease-in-out infinite alternate;
+  }
+  .orb-2 {
+    animation-delay: -5s;
+  }
+  .orb-3 {
+    animation-delay: -8s;
+  }
 }
 
-@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+/* No orbs on phones */
+@media (max-width: 767px) {
   .background-orb {
     display: none;
   }
-  .particle-background,
-  .particle-background::before,
-  .particle-background::after {
-    animation: none !important;
-  }
+}
+
+/* No backdrop-filter: it forces a re-blur of everything behind the box */
+.main-content {
+  position: relative;
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  box-shadow: 0 20px 80px color-mix(in srgb, var(--foreground) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
 }

@@ -30,7 +30,7 @@ const Homepage = async ({
   const dict = await getDictionary(locale);
 
   return (
-    <div className="">
+    <div>
       <HomeSections />
       <Suspense fallback={<ProductsSkeleton />}>
         <AllProductList locale={locale} dict={dict} />

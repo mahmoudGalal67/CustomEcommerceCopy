@@ -67,25 +67,6 @@ export default function ChatBox({ dict }: { dict: AppDictionary }) {
       echo?.leave(`chat.${chatId}`);
     };
   }, [chatId]);
-  // useEffect(() => {
-  //   if (!chatId) return;
-  //   const echo = initEcho();
-
-  //   const channel = echo.channel(`chat.${chatId}`);
-
-  //   channel.listen(".message.sent", (e: ChatMessage) => {
-  //     if (e.sender == "user") return;
-  //     if (!isOpenRef.current) {
-  //       setMessages((prev) => [...prev, { ...e }]);
-  //     } else {
-  //       MarkMessageIsreadMutation({ message_id: e.id });
-  //       setMessages((prev) => [...prev, { ...e, is_read: true }]);
-  //     }
-  //   });
-  //   return () => {
-  //     echo.leave(`chat.${chatId}`);
-  //   };
-  // }, [chatId, isOpen, MarkMessageIsreadMutation]);
 
   useEffect(() => {
     let cancelled = false;
@@ -181,7 +162,7 @@ export default function ChatBox({ dict }: { dict: AppDictionary }) {
             MarkALLMessagesIsreadForUserMutation({ chat_id: chatId });
           }
         }}
-        className={`group h-16 w-16 rounded-full bg-black dark:bg-gray-600 text-white shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center cursor-pointer ${unreadCount > 0 ? "animate-chat-shake" : ""}`}
+        className={`group h-16 w-16 rounded-full bg-black dark:bg-gray-600 text-white shadow-2xl hover:scale-105 transition-transform duration-300 flex items-center justify-center cursor-pointer ${unreadCount > 0 ? "animate-chat-shake" : ""}`}
       >
         <svg
           className={`h-7 w-7 transition-all duration-300 ${

@@ -184,10 +184,10 @@ export default function Hero2({
                     fill
                     priority
                     sizes="(min-width: 1024px) 352px, 0px"
-                    className="rounded-xl object-cover drop-shadow-2xl"
+                    className="rounded-xl object-cover shadow-2xl"
                   />
                 ) : (
-                  <span className="font-display text-[10rem] font-bold leading-none tracking-tighter text-white/90 drop-shadow-[0_6px_30px_rgba(0,0,0,0.5)]">
+                  <span className="font-display text-[10rem] font-bold leading-none tracking-tighter text-white/90 shadow-[0_6px_30px_rgba(0,0,0,0.5)]">
                     {t(featuredProduct.fallbackText)}
                   </span>
                 )}
@@ -224,8 +224,9 @@ export default function Hero2({
                     src={MiniImageUrl}
                     alt={String(t(miniProduct.name))}
                     fill
+                    priority
                     sizes="(min-width: 1024px) 176px, 0px"
-                    className="rounded-xl object-cover drop-shadow-2xl"
+                    className="rounded-xl object-cover shadow-2xl"
                   />
                 ) : (
                   <span className="font-display text-3xl font-bold text-white/90">
