@@ -103,16 +103,16 @@ export default function UploadButton({
       setUploading(false);
     }
   };
-const imageSrc = slide.image?.startsWith("http")
-  ? slide.image
-  : `${import.meta.env.VITE_API_URL}${slide.image}`;
+  const imageSrc = slide.image?.startsWith("http")
+    ? slide.image
+    : `/cms/${slide.image}`;
   return (
     <div className="w-full max-w-md mx-auto">
       <input
         ref={inputRef}
         type="file"
         hidden
-        accept="image/*"  
+        accept="image/*"
         onChange={handleChange}
       />
 
@@ -126,7 +126,7 @@ const imageSrc = slide.image?.startsWith("http")
 
         {slide.image ? (
           <img
-              src={imageSrc}
+            src={imageSrc}
             alt="preview"
             className="mx-auto mb-3 max-h-40 rounded-xl object-contain"
           />

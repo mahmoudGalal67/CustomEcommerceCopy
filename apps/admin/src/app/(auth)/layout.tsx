@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Galal dahsbard",
   description: "dashbord for galal store multi vendor",
+  icons: {
+    icon: "/admin/favicon.ico",
+  },
 };
 
 export default async function RootLayout({

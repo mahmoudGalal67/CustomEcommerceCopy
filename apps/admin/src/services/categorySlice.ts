@@ -8,6 +8,7 @@ export const categorySlice = baseApi.injectEndpoints({
     // Step 2: Define endpoints
     getCategories: builder.query<any, { search?: string }>({
       query: ({ search }) => `/categories?search=${search}`,
+      providesTags: ["Categories"],
     }),
 
     addCategory: builder.mutation({
@@ -16,6 +17,7 @@ export const categorySlice = baseApi.injectEndpoints({
         method: "POST",
         body: newCategory,
       }),
+      invalidatesTags: ["Categories"],
     }),
     getCategoryById: builder.query<any, number>({
       query: (id) => `/categories/${id}`,
@@ -44,10 +46,7 @@ export const categorySlice = baseApi.injectEndpoints({
         body: { ids },
       }),
 
-      async onQueryStarted(
-        { ids, search = "" },
-        { dispatch, queryFulfilled }
-      ) {
+      async onQueryStarted({ ids, search = "" }, { dispatch, queryFulfilled }) {
         const numericIds = ids.map(Number);
 
         const patchResult = dispatch(
@@ -56,10 +55,10 @@ export const categorySlice = baseApi.injectEndpoints({
             { search },
             (draft: any) => {
               draft.data = draft.data.filter(
-                (user: any) => !numericIds.includes(user.id)
+                (user: any) => !numericIds.includes(user.id),
               );
-            }
-          )
+            },
+          ),
         );
 
         try {
@@ -68,7 +67,6 @@ export const categorySlice = baseApi.injectEndpoints({
           patchResult.undo(); // 🔄 rollback on failure
         }
       },
-
     }),
   }),
 });

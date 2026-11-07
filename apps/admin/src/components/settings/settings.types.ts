@@ -31,7 +31,7 @@ export interface StoreSettings {
 }
 
 export const defaultSettings: StoreSettings = {
-  website_name: "",
+  website_name: "Store Name",
 
   show_contact_page: true,
   show_about_page: true,

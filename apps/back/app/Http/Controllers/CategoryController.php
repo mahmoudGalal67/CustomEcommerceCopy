@@ -52,7 +52,7 @@ class CategoryController extends Controller
             'translations' => 'required|array',
             'translations.*.locale' => 'required_with:translations|string|max:20',
             'translations.*.name' => 'required_with:translations|string|max:50',
-            'slug' => 'required|string',
+           'slug' => 'required|string|unique:categories,slug',
             'icon' => 'nullable|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
         ]);
         $path = null;

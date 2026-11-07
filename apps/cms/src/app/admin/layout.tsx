@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 import FeaturesSidebar from "@/cms/SideBarEditContentSections/FeaturesSideBar/Feattures..js";
 
 function UndoRedoToolbar() {
-
   const { undo, redo } = useCMS();
   const token = useSelector((state: RootState) => state.auth.token);
   if (!token) {
@@ -47,12 +46,18 @@ export default function AdminLayout() {
     <div className="flex h-screen overflow-hidden">
       <SidebarProvider>
         <AppSidebar />
-        <main className="flex-1 px-6 overflow-y-auto bg-gray-50">
-          {location.pathname.split('/')[2] !== 'calender' && location.pathname.split('/')[2] !== 'features' && location.pathname.split('/')[2] !== 'settings' && <UndoRedoToolbar />}
+        <main className="flex-1 px-6 overflow-y-auto overflow-x-hidden bg-gray-50">
+          {location.pathname.split("/")[2] !== "calender" &&
+            location.pathname.split("/")[2] !== "features" &&
+            location.pathname.split("/")[2] !== "settings" && (
+              <UndoRedoToolbar />
+            )}
           <Outlet />
         </main>
-        {location.pathname.split('/')[2] !== 'calender' && location.pathname.split('/')[2] !== 'features' && location.pathname.split('/')[2] !== 'settings' && <RightSidebar />}
-        {location.pathname.split('/')[2] == 'features' && <FeaturesSidebar />}
+        {location.pathname.split("/")[2] !== "calender" &&
+          location.pathname.split("/")[2] !== "features" &&
+          location.pathname.split("/")[2] !== "settings" && <RightSidebar />}
+        {location.pathname.split("/")[2] == "features" && <FeaturesSidebar />}
       </SidebarProvider>
     </div>
   );

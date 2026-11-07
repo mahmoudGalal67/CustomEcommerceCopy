@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/TablePagination";
 import { SortAscIcon } from "lucide-react";
-import Loading from "./loading";
+import Loading from "../../../components/loading1";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

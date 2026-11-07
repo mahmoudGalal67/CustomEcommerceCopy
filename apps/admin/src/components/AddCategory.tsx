@@ -24,8 +24,9 @@ import { ScrollArea } from "./ui/scroll-area";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { axiosBaseApi } from "@/utilis/axios";
 import { useState } from "react";
+import ErrorPoup from "@/components/ErrorPoup";
+import { useAddCategoryMutation } from "@/services/categorySlice";
 
 export type Category = {
   id: string;
@@ -46,9 +47,14 @@ const categorySchema = z.object({
 
 type CategoryFormValues = z.infer<typeof categorySchema>;
 
-const AddCategory = ({ setAddcategorySheet }: { setAddcategorySheet: (open: boolean) => void }) => {
+const AddCategory = ({
+  setAddcategorySheet,
+}: {
+  setAddcategorySheet: (open: boolean) => void;
+}) => {
   const [preview, setPreview] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [err, setErr] = useState();
+  const [addCategory, { isLoading }] = useAddCategoryMutation();
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -70,41 +76,37 @@ const AddCategory = ({ setAddcategorySheet }: { setAddcategorySheet: (open: bool
 
   // Handle form submission
   const onSubmit = async (data: CategoryFormValues) => {
-    setIsLoading(true);
+    setErr(undefined); // Reset error state before submission
 
     try {
       const formData = new FormData();
-      formData.append("translations[0][locale]", 'en');
+
+      formData.append("translations[0][locale]", "en");
       formData.append("translations[0][name]", data.name);
-      formData.append("translations[1][locale]", 'ar');
+
+      formData.append("translations[1][locale]", "ar");
       formData.append("translations[1][name]", data.nameAR);
+
       formData.append("slug", data.slug);
       formData.append("description", data.description || "");
+
       if (data.icon) {
         formData.append("icon", data.icon);
       }
 
-      const response = await axiosBaseApi.post("/categories", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await addCategory(formData).unwrap();
+
       setAddcategorySheet(false);
 
-      console.log("Category added:", response.data);
-
-      // Reset form & preview
       form.reset();
       setPreview(null);
-      alert("Category added successfully!");
     } catch (error: any) {
-      console.error(error);
-      alert("Failed to add category. Check console for details.");
-    } finally {
-      setIsLoading(false);
+      setErr(error);
     }
   };
 
   return (
-    <SheetContent >
+    <SheetContent>
       <ScrollArea className="h-screen">
         <SheetHeader>
           <SheetTitle className="mb-4">Add Category</SheetTitle>
@@ -238,6 +240,8 @@ const AddCategory = ({ setAddcategorySheet }: { setAddcategorySheet: (open: bool
           </SheetDescription>
         </SheetHeader>
       </ScrollArea>
+
+      <ErrorPoup error={err} />
     </SheetContent>
   );
 };

@@ -64,9 +64,9 @@ function Login() {
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm  ">
-        <Link href="/" className="flex items-center justify-center">
+        <Link href="/" className="flex items-center justify-center gap-4">
           <img
-            src="/logo.png"
+            src="/admin/layout.png"
             alt="GalalStore"
             width={36}
             height={36}

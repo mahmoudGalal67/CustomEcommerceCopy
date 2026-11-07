@@ -137,7 +137,12 @@ const AppSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/">
-                <Image src="/Mylogo.png" alt="logo" width={20} height={20} />
+                <Image
+                  src="/admin/layout.png"
+                  alt="logo"
+                  width={20}
+                  height={20}
+                />
                 <span>{user?.name}</span>
               </Link>
             </SidebarMenuButton>

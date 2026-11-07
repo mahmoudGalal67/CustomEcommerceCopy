@@ -6,88 +6,98 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateFeatureRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Prepare the data for validation.
-     */
     protected function prepareForValidation(): void
     {
-        $data = [
-            'show_contact_page' => filter_var(
-                $this->input('show_contact_page'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
+        /*
+        |--------------------------------------------------------------------------
+        | Boolean fields
+        |--------------------------------------------------------------------------
+        */
 
-            'show_about_page' => filter_var(
-                $this->input('show_about_page'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'show_terms_page' => filter_var(
-                $this->input('show_terms_page'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'show_privacy_page' => filter_var(
-                $this->input('show_privacy_page'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'email_notifications' => filter_var(
-                $this->input('email_notifications'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'leave_at_door' => filter_var(
-                $this->input('leave_at_door'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'signature_required' => filter_var(
-                $this->input('signature_required'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'show_featured_products' => filter_var(
-                $this->input('show_featured_products'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'show_best_sellers' => filter_var(
-                $this->input('show_best_sellers'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'show_new_arrivals' => filter_var(
-                $this->input('show_new_arrivals'),
-                FILTER_VALIDATE_BOOLEAN
-            ),
-
-            'languages' => $this->input('languages', []),
-
-            'payment_methods' => json_decode(
-                $this->input('payment_methods', '[]'),
-                true
-            ),
+        $booleanFields = [
+            'show_contact_page',
+            'show_about_page',
+            'show_terms_page',
+            'show_privacy_page',
+            'email_notifications',
+            'leave_at_door',
+            'signature_required',
+            'show_featured_products',
+            'show_best_sellers',
+            'show_new_arrivals',
+            'wishlist_public',
         ];
 
-        $this->merge($data);
+        $normalized = [];
+
+        foreach ($booleanFields as $field) {
+            // Do not overwrite settings that were not submitted.
+            if (!$this->exists($field)) {
+                continue;
+            }
+
+            $value = filter_var(
+                $this->input($field),
+                FILTER_VALIDATE_BOOLEAN,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            if ($value !== null) {
+                $normalized[$field] = $value;
+            }
+        }
 
         /*
         |--------------------------------------------------------------------------
-        | Remove empty image values
+        | Languages
         |--------------------------------------------------------------------------
-        |
-        | FormData may send null as the string "null".
-        | We don't want Laravel to validate that as an image.
-        |
+        */
+
+        if ($this->exists('languages')) {
+            $languages = $this->input('languages');
+
+            if (is_string($languages)) {
+                $decoded = json_decode($languages, true);
+
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $languages = $decoded;
+                }
+            }
+
+            $normalized['languages'] = $languages;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payment methods
+        |--------------------------------------------------------------------------
+        */
+
+        if ($this->exists('payment_methods')) {
+            $paymentMethods = $this->input('payment_methods');
+
+            if (is_string($paymentMethods)) {
+                $decoded = json_decode($paymentMethods, true);
+
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $paymentMethods = $decoded;
+                }
+            }
+
+            $normalized['payment_methods'] = $paymentMethods;
+        }
+
+        $this->merge($normalized);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Empty image values
+        |--------------------------------------------------------------------------
         */
 
         foreach ([
@@ -98,149 +108,69 @@ class UpdateFeatureRequest extends FormRequest
             $value = $this->input($field);
 
             if (
-                $value === null ||
-                $value === '' ||
-                $value === 'null' ||
-                $value === 'undefined'
+                in_array($value, ['', 'null', 'undefined'], true)
             ) {
                 $this->request->remove($field);
             }
         }
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         return [
-            'website_name' => [
-                'nullable',
-                'string',
-            ],
+            'website_name' => 'sometimes|string|max:255',
 
-            'show_contact_page' => [
-                'boolean',
-            ],
+            // Pages
+            'show_contact_page' => 'sometimes|boolean',
+            'show_about_page' => 'sometimes|boolean',
+            'show_terms_page' => 'sometimes|boolean',
+            'show_privacy_page' => 'sometimes|boolean',
 
-            'show_about_page' => [
-                'boolean',
-            ],
+            // Localization
+            'languages' => 'sometimes|array',
+            'languages.*' => 'string|max:10',
 
-            'show_terms_page' => [
-                'boolean',
-            ],
+            'currency' => 'sometimes|string|max:10',
 
-            'show_privacy_page' => [
-                'boolean',
-            ],
+            // Addresses
+            'address_label' => 'sometimes|string|max:100',
+            'default_billing_address' => 'sometimes|nullable|string',
+            'default_shipping_address' => 'sometimes|nullable|string',
 
-            'languages' => [
-                'nullable',
-                'array',
-            ],
+            // SEO
+            'seo_title' => 'sometimes|nullable|string|max:255',
+            'seo_description' => 'sometimes|nullable|string',
+            'seo_keywords' => 'sometimes|nullable|string',
 
-            'languages.*' => [
-                'string',
-            ],
+            // Contact
+            'contact_whatsapp' => 'sometimes|nullable|string|max:50',
+            'contact_email' => 'sometimes|nullable|email|max:255',
+            'contact_phone' => 'sometimes|nullable|string|max:50',
 
-            'currency' => [
-                'string',
-            ],
+            // Notifications
+            'email_notifications' => 'sometimes|boolean',
 
-            'address_label' => [
-                'string',
-            ],
+            // Delivery
+            'preferred_delivery_time' => 'sometimes|nullable|string',
+            'leave_at_door' => 'sometimes|boolean',
+            'signature_required' => 'sometimes|boolean',
 
-            'default_billing_address' => [
-                'nullable',
-                'string',
-            ],
+            // Other
+            'coupon_code' => 'sometimes|nullable|string|max:255',
+            'wishlist_public' => 'sometimes|boolean',
+            'footer_font_size' => 'sometimes|integer|min:10|max:40',
 
-            'default_shipping_address' => [
-                'nullable',
-                'string',
-            ],
+            // Homepage
+            'show_featured_products' => 'sometimes|boolean',
+            'show_best_sellers' => 'sometimes|boolean',
+            'show_new_arrivals' => 'sometimes|boolean',
 
-            'seo_title' => [
-                'string',
-            ],
+            // Payments
+            'payment_methods' => 'sometimes|array',
 
-            'seo_description' => [
-                'string',
-            ],
-
-            'seo_keywords' => [
-                'string',
-            ],
-
-            'contact_whatsapp' => [
-                'string',
-            ],
-
-            'email_notifications' => [
-                'boolean',
-            ],
-
-            'wishlist_public' => [
-                'boolean',
-            ],
-
-            'preferred_delivery_time' => [
-                'nullable',
-                'string',
-            ],
-
-            'leave_at_door' => [
-                'boolean',
-            ],
-
-            'signature_required' => [
-                'boolean',
-            ],
-
-            'contact_email' => [
-                'nullable',
-                'email',
-            ],
-
-            'contact_phone' => [
-                'nullable',
-                'string',
-            ],
-
-            'coupon_code' => [
-                'nullable',
-                'string',
-            ],
-
-            'footer_font_size' => [
-                'integer',
-            ],
-
-            'payment_methods' => [
-                'array',
-            ],
-
-            'show_featured_products' => [
-                'boolean',
-            ],
-
-            'show_best_sellers' => [
-                'boolean',
-            ],
-
-            'show_new_arrivals' => [
-                'boolean',
-            ],
-
-            /*
-            |--------------------------------------------------------------------------
-            | Images
-            |--------------------------------------------------------------------------
-            */
-
+            // Images
             'background_image' => [
+                'sometimes',
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
@@ -248,6 +178,7 @@ class UpdateFeatureRequest extends FormRequest
             ],
 
             'store_logo' => [
+                'sometimes',
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
@@ -255,10 +186,11 @@ class UpdateFeatureRequest extends FormRequest
             ],
 
             'favicon' => [
+                'sometimes',
                 'nullable',
-                'image',
+                'file',
                 'mimes:jpg,jpeg,png,webp,ico',
-                'max:5120',
+                'max:2048',
             ],
         ];
     }

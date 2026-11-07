@@ -12,10 +12,12 @@ return new class extends Migration {
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('site_name')->default('site_name');
+            $table->string('site_name')->nullable();
             $table->string('site_description')->nullable();
-            $table->string('site_contact_phone')->default('000-000-0000');
-            $table->string('site_contact_email')->default('contact@yoursite.com');
+            $table->string('site_contact_phone')->nullable();
+            $table->string('site_contact_email')->nullable();
+            $table->string('site_location')->nullable();
+
             $table->string('logo')->nullable();
             $table->string('favicon')->nullable();
 

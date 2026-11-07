@@ -4,150 +4,140 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateFeatureRequest;
 use App\Models\Feature;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Throwable;
 
 class FeatureController extends Controller
 {
+    /**
+     * Get store settings.
+     */
     public function show()
     {
-        $feature = Feature::first();
+      $feature = Feature::first();
 
-        if (!$feature) {
-            $feature = Feature::create([
-                'data' => [
-                    'website_name' => '',
+if (!$feature) {
+    $feature = Feature::create([
+        'data' => Feature::defaults(),
+    ]);
+}
 
-                    'show_contact_page' => true,
-                    'show_about_page' => true,
-                    'show_terms_page' => true,
-                    'show_privacy_page' => true,
+        // Include defaults for settings introduced in future versions.
+        $data = array_merge(
+            Feature::defaults(),
+            $feature->data ?? []
+        );
 
-                    'default_shipping_address' => '',
-                    'default_billing_address' => '',
-                    'address_label' => 'Home',
-
-                    'email_notifications' => true,
-
-                    'languages' => ['en'],
-                    'currency' => 'USD',
-
-                    'preferred_delivery_time' => '',
-
-                    'leave_at_door' => false,
-                    'signature_required' => false,
-
-                    'contact_email' => '',
-                    'contact_phone' => '',
-                    'contact_whatsapp' => '',
-
-                    'coupon_code' => '',
-
-                    'footer_font_size' => 14,
-
-                    'background_image' => '',
-                    'store_logo' => '',
-                    'favicon' => '',
-
-                    'seo_title' => '',
-                    'seo_description' => '',
-                    'seo_keywords' => '',
-
-                    'show_featured_products' => true,
-                    'show_best_sellers' => true,
-                    'show_new_arrivals' => true,
-
-                    'payment_methods' => [],
-                ],
-            ]);
-        }
-
-        return response()->json($feature->data);
+        return response()->json($data);
     }
 
+    /**
+     * Update store settings.
+     */
     public function update(UpdateFeatureRequest $request)
     {
-        $feature = Feature::first();
+ $feature = Feature::first();
 
-        if (!$feature) {
-            $feature = Feature::create([
-                'data' => [],
-            ]);
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Existing settings
-        |--------------------------------------------------------------------------
-        */
-
-        $existing = $feature->data ?? [];
-
-        if (is_string($existing)) {
-            $existing = json_decode($existing, true) ?? [];
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Validated normal fields
-        |--------------------------------------------------------------------------
-        */
+if (!$feature) {
+    $feature = Feature::create([
+        'data' => Feature::defaults(),
+    ]);
+}
+        $existing = array_merge(
+            Feature::defaults(),
+            $feature->data ?? []
+        );
 
         $data = $request->validated();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Background Image
-        |--------------------------------------------------------------------------
-        */
+        $imageFields = [
+            'background_image',
+            'store_logo',
+            'favicon',
+        ];
 
-        if ($request->hasFile('background_image')) {
-            $path = $request
-                ->file('background_image')
-                ->store('features', 'public');
+        $newFiles = [];
+        $oldFiles = [];
 
-            $data['background_image'] = "/storage/{$path}";
+        try {
+            /*
+            |--------------------------------------------------------------------------
+            | Upload images
+            |--------------------------------------------------------------------------
+            */
+
+            foreach ($imageFields as $field) {
+                if (!$request->hasFile($field)) {
+                    continue;
+                }
+
+                $oldFiles[$field] = $existing[$field] ?? null;
+
+                $path = $request->file($field)->store(
+                    'features',
+                    'public'
+                );
+
+                $newFiles[] = $path;
+
+                $data[$field] = "/storage/{$path}";
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Merge existing settings with submitted settings
+            |--------------------------------------------------------------------------
+            */
+
+            $updatedData = array_merge($existing, $data);
+
+            $feature->data = $updatedData;
+            $feature->save();
+
+        } catch (Throwable $e) {
+
+            // Remove newly uploaded files if saving failed.
+            foreach ($newFiles as $path) {
+                Storage::disk('public')->delete($path);
+            }
+
+            throw $e;
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Store Logo
+        | Delete old images after successful database update
         |--------------------------------------------------------------------------
         */
 
-        if ($request->hasFile('store_logo')) {
-            $path = $request
-                ->file('store_logo')
-                ->store('features', 'public');
-
-            $data['store_logo'] = "/storage/{$path}";
+        foreach ($oldFiles as $oldFile) {
+            $this->deleteFeatureImage($oldFile);
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Favicon
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->hasFile('favicon')) {
-            $path = $request
-                ->file('favicon')
-                ->store('features', 'public');
-
-            $data['favicon'] = "/storage/{$path}";
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Update settings
-        |--------------------------------------------------------------------------
-        */
-
-        $feature->update([
-            'data' => array_merge($existing, $data),
-        ]);
 
         return response()->json([
+            'success' => true,
             'message' => 'Settings updated successfully.',
             'data' => $feature->data,
         ]);
+    }
+
+    /**
+     * Delete an old image safely.
+     */
+    private function deleteFeatureImage(?string $url): void
+    {
+        if (!$url || !str_starts_with($url, '/storage/')) {
+            return;
+        }
+
+        $path = Str::after($url, '/storage/');
+
+        // Only delete files belonging to the features directory.
+        if (!str_starts_with($path, 'features/')) {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

@@ -58,7 +58,6 @@ export default function ProductForm() {
 
   const onSubmit = async (data: any) => {
     const convertedData = createProductFormData(data, isEdit);
-    console.log(data);
     try {
       if (isEdit) {
         await updateProduct({ id, data: convertedData }).unwrap();

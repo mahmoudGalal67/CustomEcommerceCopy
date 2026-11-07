@@ -72,7 +72,7 @@ export default function SectionWrapper({ section, index, children }: any) {
 
       {children}
 
-      {showAdd && (
+      {showAdd && active && (
         <div onClick={(e) => e.stopPropagation()}>
           <AddSectionModal
             onSelect={(type: SectionType) => {

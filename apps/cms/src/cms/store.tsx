@@ -212,7 +212,7 @@ const SECTION_DEFAULTS: Record<SectionType, () => Section["props"]> = {
           ar: "اكتشف أحدث الأحذية الرياضية من أشهر العلامات التجارية العالمية.",
         },
 
-        image: "",
+        image: "banner.png",
       },
     ],
   }),
@@ -817,7 +817,6 @@ export function CMSProvider({ children }: CMSProviderProps) {
         type,
         props: SECTION_DEFAULTS[type](),
       };
-
       updateCurrentPage((page) => {
         const sections = [...page.sections];
 

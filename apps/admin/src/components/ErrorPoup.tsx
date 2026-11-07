@@ -20,17 +20,6 @@ export default function LaravelErrorPopup({ error }: LaravelErrorPopupProps) {
 
   if (!error) return null;
 
-  /*
-   * RTK Query errors can look like:
-   *
-   * {
-   *   status: 500,
-   *   data: {
-   *     message: "SQLSTATE..."
-   *   }
-   * }
-   */
-
   const payload = error?.data ?? error;
 
   const message =
@@ -39,6 +28,8 @@ export default function LaravelErrorPopup({ error }: LaravelErrorPopupProps) {
     "Something went wrong. Please try again.";
 
   const errors = payload?.errors;
+
+  console.log("LaravelErrorPopup payload:", error);
 
   return (
     <AnimatePresence>

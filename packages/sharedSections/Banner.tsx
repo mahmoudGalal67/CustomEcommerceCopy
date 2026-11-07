@@ -39,7 +39,7 @@ export default function Banner({
   const activeslide = slides[0];
   const imageSrc = activeslide.image?.startsWith("http")
     ? activeslide.image
-    : `${apiUrl}${activeslide.image}`;
+    : `/cms/${activeslide.image}`;
 
   return (
     <section
@@ -47,7 +47,7 @@ export default function Banner({
       lang={lang}
       className={isEditable ? "pointer-events-none" : "my-2"}
     >
-      <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-gray-900 text-white">
+      <div className="relative flex h-full w-full p-32 items-center justify-center overflow-hidden rounded-2xl bg-gray-900 text-white">
         {imageSrc && (
           <Image
             src={imageSrc}

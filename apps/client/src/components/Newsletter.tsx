@@ -30,8 +30,8 @@ export function Newsletter() {
     if (!EMAIL_RE.test(value)) {
       setError(
         locale === "ar"
-          ? "حدث خطأ أثناء الاشتراك. حاول مرة أخرى."
-          : "Something went wrong. Please try again.",
+          ? "حدث خطأ في البريد الإلكتروني. يرجى إدخال بريد إلكتروني صالح."
+          : "Invalid email address.",
       ); // use your existing Arabic/English text here
       return;
     }
@@ -40,6 +40,9 @@ export function Newsletter() {
     try {
       await subscribeNewsletter({ email: value }).unwrap();
       setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
       setEmail("");
     } catch (err: any) {
       setError(err?.data?.message ?? "Something went wrong, please try again");
@@ -88,6 +91,7 @@ export function Newsletter() {
             <Input
               type="email"
               value={email}
+              required
               onChange={(e) => {
                 setEmail(e.target.value);
                 setError("");

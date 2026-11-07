@@ -14,31 +14,39 @@ import {
 } from "@/services/SettingsApi";
 import { Textarea } from "@/components/ui/textarea";
 
+type NullableString = string | null;
+
 type Social = {
-  name: string;
-  link: string;
-  logo: File | string;
+  name: NullableString;
+  link: NullableString;
+  logo: File | string | null;
 };
 
 type SettingsForm = {
-  site_name: string;
-  site_description: string;
-  site_location: string;
-  site_contact_phone: string;
-  site_contact_email: string;
-  logo: File | string;
+  site_name: NullableString;
+  site_description: NullableString;
+  site_location: NullableString;
+  site_contact_phone: NullableString;
+  site_contact_email: NullableString;
+  logo: File | string | null;
   colors: {
-    primary: string;
-    secondary: string;
+    primary: NullableString;
+    secondary: NullableString;
   };
-  socials: Social[];
+  socials: Social[] | null;
 };
 
 export default function SettingsPage() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const { data: settings, isError, isLoading } = useGetSettingsQuery(undefined);
-  const [updateSettings, { isError: updateError, isLoading: updateLoading }] =
+  const { data: settings, isLoading } = useGetSettingsQuery(undefined);
+  const [updateSettings, { isLoading: updateLoading }] =
     useUpdateSettingsMutation();
+
+  const [serverErrors, setServerErrors] = useState<Record<string, string[]>>(
+    {},
+  );
+  const [serverMessage, setServerMessage] = useState("");
+  const [hasServerError, setHasServerError] = useState(false);
 
   const getSocialImageUrl = (value: string) => {
     if (!value) return "";
@@ -90,45 +98,93 @@ export default function SettingsPage() {
        Load settings from backend
     =============================== */
   useEffect(() => {
-    if (settings) {
-      reset(settings);
-    }
-  }, [settings]);
+    if (!settings) return;
+
+    reset({
+      site_name: settings.site_name ?? "",
+      site_description: settings.site_description ?? "",
+      site_location: settings.site_location ?? "",
+      site_contact_phone: settings.site_contact_phone ?? "",
+      site_contact_email: settings.site_contact_email ?? "",
+      logo: settings.logo ?? "",
+      colors: {
+        primary: settings.colors?.primary ?? "#000000",
+        secondary: settings.colors?.secondary ?? "#ffffff",
+      },
+      socials: (settings.socials ?? []).map((social: Social) => ({
+        name: social.name ?? "",
+        link: social.link ?? "",
+        logo: social.logo ?? "",
+      })),
+    });
+  }, [settings, reset]);
 
   const onSubmit = async (data: SettingsForm) => {
-    const formData = new FormData();
+    try {
+      setServerMessage("");
+      setServerErrors({});
 
-    formData.append("site_name", data.site_name);
-    formData.append("site_location", data.site_location);
-    formData.append("site_description", data.site_description);
-    formData.append("site_contact_phone", data.site_contact_phone);
-    formData.append("site_contact_email", data.site_contact_email);
+      const formData = new FormData();
 
-    if (data.logo instanceof File) {
-      formData.append("logo", data.logo);
-    }
+      formData.append("site_name", data.site_name ?? "");
+      formData.append("site_location", data.site_location ?? "");
+      formData.append("site_description", data.site_description ?? "");
+      formData.append("site_contact_phone", data.site_contact_phone ?? "");
+      formData.append("site_contact_email", data.site_contact_email ?? "");
 
-    // ✅ colors as array
-    formData.append("colors[primary]", data.colors.primary);
-    formData.append("colors[secondary]", data.colors.secondary);
-
-    // ✅ socials as array
-    data.socials.forEach((social, index) => {
-      formData.append(`socials[${index}][name]`, social.name);
-      formData.append(`socials[${index}][link]`, social.link);
-
-      if (social.logo instanceof File) {
-        formData.append(`socials[${index}][logo]`, social.logo);
+      if (data.logo instanceof File) {
+        formData.append("logo", data.logo);
       }
-    });
 
-    updateSettings(formData);
+      formData.append("colors[primary]", data.colors.primary ?? "");
+      formData.append("colors[secondary]", data.colors.secondary ?? "");
+
+      (data.socials ?? []).forEach((social, index) => {
+        formData.append(`socials[${index}][name]`, social.name ?? "");
+        formData.append(`socials[${index}][link]`, social.link ?? "");
+
+        if (social.logo instanceof File) {
+          formData.append(`socials[${index}][logo]`, social.logo);
+        }
+      });
+
+      await updateSettings(formData).unwrap();
+      setServerErrors({});
+      setHasServerError(false);
+      setServerMessage("Settings updated successfully.");
+      setTimeout(() => {
+        setServerMessage("");
+      }, 4000);
+    } catch (error: any) {
+      const response = error?.data;
+
+      setHasServerError(true);
+
+      if (response?.errors) {
+        setServerErrors(response.errors);
+      }
+
+      setServerMessage(
+        response?.message || "Something went wrong. Please try again.",
+      );
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      {serverMessage && (
+        <div
+          className={`rounded-lg border px-4 py-3 text-sm ${
+            hasServerError
+              ? "border-destructive/30 bg-destructive/10 text-destructive"
+              : "border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400"
+          }`}
+        >
+          {serverMessage}
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>Website Settings</CardTitle>
@@ -138,12 +194,7 @@ export default function SettingsPage() {
           {/* Site Name */}
           <div className="space-y-2">
             <Label>Site Name</Label>
-            <Input
-              {...register("site_name", {
-                required: "Site name is required",
-                minLength: { value: 3, message: "Min 3 characters" },
-              })}
-            />
+            <Input {...register("site_name", {})} />
             {errors.site_name && (
               <p className="text-sm text-red-500">{errors.site_name.message}</p>
             )}
@@ -155,10 +206,7 @@ export default function SettingsPage() {
               rows={4}
               placeholder="Enter site description"
               className="resize-none"
-              {...register("site_description", {
-                required: "Site description is required",
-                minLength: { value: 3, message: "Min 3 characters" },
-              })}
+              {...register("site_description", {})}
             />
             {errors.site_description && (
               <p className="text-sm text-red-500">
@@ -169,11 +217,7 @@ export default function SettingsPage() {
           {/* Site Contact Phone */}
           <div className="space-y-2">
             <Label>Site Contact Phone</Label>
-            <Input
-              {...register("site_contact_phone", {
-                required: "Site contact phone is required",
-              })}
-            />
+            <Input {...register("site_contact_phone")} />
             {errors.site_contact_phone && (
               <p className="text-sm text-red-500">
                 {errors.site_contact_phone.message}
@@ -183,16 +227,7 @@ export default function SettingsPage() {
           {/* Site Contact Email */}
           <div className="space-y-2">
             <Label>Site Contact Email</Label>
-            <Input
-              type="email"
-              {...register("site_contact_email", {
-                required: "Site contact email is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Invalid email format",
-                },
-              })}
-            />
+            <Input type="email" {...register("site_contact_email")} />
             {errors.site_contact_email && (
               <p className="text-sm text-red-500">
                 {errors.site_contact_email.message}
@@ -206,10 +241,7 @@ export default function SettingsPage() {
               rows={4}
               placeholder="Enter site Location"
               className="resize-none"
-              {...register("site_location", {
-                required: "Site Location is required",
-                minLength: { value: 3, message: "Min 3 characters" },
-              })}
+              {...register("site_location")}
             />
 
             {errors.site_location && (
@@ -239,7 +271,7 @@ export default function SettingsPage() {
               />
             ) : (
               <img
-                src="/logo.png"
+                src="/admin/logo.png"
                 className="h-16 rounded border object-contain"
                 alt="default logo"
               />
@@ -358,7 +390,7 @@ export default function SettingsPage() {
                     />
                   ) : (
                     <img
-                      src="/logo.png"
+                      src="/admin/logo.png"
                       className="h-10 w-10 rounded border object-contain"
                       alt="icon"
                     />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +38,7 @@ export default function SettingsForm() {
     {},
   );
   const [serverMessage, setServerMessage] = useState("");
+  const [hasServerError, setHasServerError] = useState(false);
   const { data, isLoading } = useGetFeaturesQuery(undefined);
 
   const [updateSettings, updateState] = useUpdateFeaturesMutation();
@@ -70,7 +71,12 @@ export default function SettingsForm() {
   useEffect(() => {
     if (!data) return;
 
-    reset(data);
+    reset({
+      ...defaultSettings,
+      ...data,
+      currency: data.currency,
+      footer_font_size: Number(data.footer_font_size),
+    });
 
     if (data.background_image) {
       setBackgroundPreview(
@@ -88,7 +94,7 @@ export default function SettingsForm() {
   }, [data, reset]);
 
   if (isLoading) {
-    return <div className="p-10">Loading Settings...</div>;
+    return <div className="p-10">Loading Features...</div>;
   }
 
   const languages = watch("languages");
@@ -115,19 +121,21 @@ export default function SettingsForm() {
     setServerErrors({});
     setServerMessage("");
     try {
-      console.log(values);
       const formData = new FormData();
 
+      const imageFields = ["background_image", "store_logo", "favicon"];
+
       Object.entries(values).forEach(([key, value]) => {
+        // Image URLs are not uploaded files.
+        if (imageFields.includes(key)) return;
+
         if (key === "payment_methods") {
-          formData.append("payment_methods", JSON.stringify(value));
-        } else if (Array.isArray(value)) {
-          value.forEach((item: any) => {
-            formData.append(`${key}[]`, item);
-          });
-        } else if (typeof value === "object" && value !== null) {
           formData.append(key, JSON.stringify(value));
-        } else {
+        } else if (Array.isArray(value)) {
+          value.forEach((item) => {
+            formData.append(`${key}[]`, String(item));
+          });
+        } else if (value !== undefined && value !== null) {
           formData.append(key, String(value));
         }
       });
@@ -143,29 +151,26 @@ export default function SettingsForm() {
       if (faviconFile) {
         formData.append("favicon", faviconFile);
       }
-
       await updateSettings(formData).unwrap();
+
+      setServerErrors({});
+      setHasServerError(false);
       setServerMessage("Settings updated successfully.");
       setTimeout(() => {
         setServerMessage("");
       }, 4000);
     } catch (error: any) {
-      console.error(error);
+      const response = error?.data;
 
-      const errors = error?.data?.errors;
+      setHasServerError(true);
 
-      if (errors) {
-        setServerErrors(errors);
-      }
-      if (error?.data?.message) {
-        setServerMessage(error.data.message);
-      } else {
-        setServerMessage("Something went wrong. Please try again.");
+      if (response?.errors) {
+        setServerErrors(response.errors);
       }
 
-      // setTimeout(() => {
-      //   setServerMessage("");
-      // }, 5000);
+      setServerMessage(
+        response?.message || "Something went wrong. Please try again.",
+      );
     }
   };
   function FieldError({ message }: { message?: string }) {
@@ -173,19 +178,7 @@ export default function SettingsForm() {
 
     return <p className="mt-1.5 text-sm text-destructive">{message}</p>;
   }
-  function ServerFieldError({
-    errors,
-    field,
-  }: {
-    errors: Record<string, string[]>;
-    field: string;
-  }) {
-    const message = errors?.[field]?.[0];
 
-    if (!message) return null;
-
-    return <p className="mt-1.5 text-sm text-destructive">{message}</p>;
-  }
   return (
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => {
@@ -196,7 +189,7 @@ export default function SettingsForm() {
       {serverMessage && (
         <div
           className={`rounded-lg border px-4 py-3 text-sm ${
-            Object.keys(serverErrors).length > 0
+            hasServerError
               ? "border-destructive/30 bg-destructive/10 text-destructive"
               : "border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400"
           }`}
@@ -204,6 +197,7 @@ export default function SettingsForm() {
           {serverMessage}
         </div>
       )}
+
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader>
@@ -307,32 +301,54 @@ export default function SettingsForm() {
             </div>
 
             <div>
-              <Label className="mb-2">Currency</Label>
+              <Label className="mb-2 block">Currency</Label>
 
-              <Select
-                value={watch("currency")}
-                onValueChange={(value) =>
-                  setValue("currency", value as "USD" | "EUR" | "EGP" | "SAR", {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                    shouldTouch: true,
-                  })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+              <Controller
+                name="currency"
+                control={control}
+                render={({ field }) => (
+                  <div className="relative">
+                    <select
+                      {...field}
+                      value={field.value ?? ""}
+                      className="
+            h-10 w-full appearance-none rounded-md
+            border border-input bg-background
+            px-3 py-2 pr-10 text-sm text-foreground
+            shadow-sm outline-none
+            transition-colors
+            hover:bg-accent/30
+            focus-visible:border-ring
+            focus-visible:ring-2
+            focus-visible:ring-ring/50
+            disabled:cursor-not-allowed disabled:opacity-50
+          "
+                    >
+                      <option value="" disabled>
+                        Select currency
+                      </option>
+                      <option value="USD">USD — US Dollar</option>
+                      <option value="EUR">EUR — Euro</option>
+                      <option value="EGP">EGP — Egyptian Pound</option>
+                      <option value="SAR">SAR — Saudi Riyal</option>
+                    </select>
 
-                <SelectContent>
-                  <SelectItem value="USD">USD</SelectItem>
+                    <svg
+                      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </div>
+                )}
+              />
 
-                  <SelectItem value="EUR">EUR</SelectItem>
-
-                  <SelectItem value="EGP">EGP</SelectItem>
-
-                  <SelectItem value="SAR">SAR</SelectItem>
-                </SelectContent>
-              </Select>
               <FieldError message={errors.currency?.message} />
             </div>
           </CardContent>

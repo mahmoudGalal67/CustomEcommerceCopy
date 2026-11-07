@@ -73,11 +73,11 @@ class SettingController extends Controller
         */
 
         $data = $request->validate([
-            'site_name' => 'sometimes|string|max:255',
+            'site_name' => 'sometimes|nullable|string|max:255',
             'site_description' => 'sometimes|nullable|string|max:255',
-            'site_contact_phone' => 'string|max:20',
-            'site_contact_email' => 'string|email',
-            'site_location' => 'sometimes|string',
+            'site_contact_phone' => 'sometimes|nullable|string|max:20',
+            'site_contact_email' => 'sometimes|nullable|string|email',
+            'site_location' => 'sometimes|nullable|string',
 
             'logo' => 'sometimes|nullable|image',
             'favicon' => 'sometimes|nullable|image',
