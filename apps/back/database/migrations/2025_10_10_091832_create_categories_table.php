@@ -17,6 +17,7 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string('slug')->unique();
+            $table->text('description')->nullable();
             $table->string('icon')->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->timestamps();

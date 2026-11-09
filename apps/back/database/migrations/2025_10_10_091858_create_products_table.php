@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->string('base_images')->nullable();
             $table->decimal('base_price', 12, 2)->default(0);
+            $table->integer('stock')->default(0);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);
             $table->softDeletes();
