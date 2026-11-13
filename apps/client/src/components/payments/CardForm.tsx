@@ -129,7 +129,7 @@ const PaymentForm = ({
         )}
 
         {/* Accepted Cards */}
-        <div className="flex items-center gap-2 mt-4">
+        <div className="flex items-center gap-2 mt-4 flex-wrap">
           <Image src="/cards.png" alt="cards" width={60} height={25} />
           <Image src="/paypal.png" alt="klarna" width={60} height={25} />
           <Image src="/stripe.png" alt="stripe" width={60} height={25} />

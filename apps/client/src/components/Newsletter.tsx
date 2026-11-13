@@ -99,7 +99,7 @@ export function Newsletter() {
               placeholder={
                 locale === "ar" ? "أدخل بريدك الإلكتروني" : "Enter your email"
               }
-              className="h-12 flex-1 rounded-full border border-border/60
+              className="md:h-12 h-10 flex-1 rounded-full border border-border/60
             bg-background/60 px-5 text-sm outline-none transition-colors
             placeholder:text-muted-foreground focus:border-primary focus:ring-2
             focus:ring-primary/30"
@@ -108,7 +108,7 @@ export function Newsletter() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="cursor-pointer h-12 gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+              className="cursor-pointer md:h-12 h-10 gap-2 rounded-full bg-primary md:px-6 px-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               {isLoading ? (
                 <>

@@ -271,7 +271,7 @@ export default function SettingsPage() {
               />
             ) : (
               <img
-                src="/admin/logo.png"
+                src="/logo.png"
                 className="h-16 rounded border object-contain"
                 alt="default logo"
               />
@@ -390,7 +390,7 @@ export default function SettingsPage() {
                     />
                   ) : (
                     <img
-                      src="/admin/logo.png"
+                      src="/logo.png"
                       className="h-10 w-10 rounded border object-contain"
                       alt="icon"
                     />

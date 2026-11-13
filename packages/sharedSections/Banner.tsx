@@ -47,7 +47,7 @@ export default function Banner({
       lang={lang}
       className={isEditable ? "pointer-events-none" : "my-2"}
     >
-      <div className="relative flex h-full w-full p-32 items-center justify-center overflow-hidden rounded-2xl bg-gray-900 text-white">
+      <div className="relative flex h-full w-full md:p-32 p-8 items-center justify-center overflow-hidden rounded-2xl bg-gray-900 text-white">
         {imageSrc && (
           <Image
             src={imageSrc}
@@ -72,12 +72,12 @@ export default function Banner({
         />
 
         {/* Content */}
-        <div className="relative z-10 max-w-3xl px-8 py-6 text-center">
-          <h2 className="text-3xl font-bold tracking-tight drop-shadow-[0_3px_10px_rgba(0,0,0,0.5)] md:text-5xl">
+        <div className="relative z-5 max-w-3xl md:px-8 md:py-6 p-4 text-center">
+          <h2 className="text-2xl font-bold tracking-tight drop-shadow-[0_3px_10px_rgba(0,0,0,0.5)] md:text-5xl">
             {t(activeslide.title)}
           </h2>
 
-          <p className="mt-3 text-lg text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] md:text-2xl">
+          <p className="mt-3 text-md text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] md:text-2xl">
             {t(activeslide.subTitle)}
           </p>
         </div>

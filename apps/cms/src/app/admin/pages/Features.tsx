@@ -47,7 +47,7 @@ export default function Features() {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {!!announcementBar?.enabled && (
         <AnnouncementMarquee data={announcementBar} />
       )}

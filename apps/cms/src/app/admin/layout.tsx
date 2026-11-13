@@ -13,13 +13,13 @@ import FeaturesSidebar from "@/cms/SideBarEditContentSections/FeaturesSideBar/Fe
 function UndoRedoToolbar() {
   const { undo, redo } = useCMS();
   const token = useSelector((state: RootState) => state.auth.token);
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
   return (
     <div className="flex gap-2 mb-4">
-      {/* Undo Button */}
       <button
         onClick={undo}
         className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
@@ -28,7 +28,6 @@ function UndoRedoToolbar() {
         Undo
       </button>
 
-      {/* Redo Button */}
       <button
         onClick={redo}
         className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
@@ -42,23 +41,39 @@ function UndoRedoToolbar() {
 
 export default function AdminLayout() {
   const location = useLocation();
+
+  const currentSection = location.pathname.split("/")[2];
+
+  const hideSidebars = ["calender", "features", "settings"].includes(
+    currentSection,
+  );
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      <SidebarProvider>
+    <div className="flex h-dvh w-full overflow-hidden">
+      {/* Left Sidebar */}
+      <SidebarProvider defaultOpen={true} className="contents">
         <AppSidebar />
-        <main className="flex-1 px-6 overflow-y-auto overflow-x-hidden bg-gray-50">
-          {location.pathname.split("/")[2] !== "calender" &&
-            location.pathname.split("/")[2] !== "features" &&
-            location.pathname.split("/")[2] !== "settings" && (
-              <UndoRedoToolbar />
-            )}
-          <Outlet />
-        </main>
-        {location.pathname.split("/")[2] !== "calender" &&
-          location.pathname.split("/")[2] !== "features" &&
-          location.pathname.split("/")[2] !== "settings" && <RightSidebar />}
-        {location.pathname.split("/")[2] == "features" && <FeaturesSidebar />}
       </SidebarProvider>
+
+      {/* Main Content */}
+      <main className="relative flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden bg-gray-50 px-3 sm:px-6">
+        {!hideSidebars && <UndoRedoToolbar />}
+        <Outlet />
+      </main>
+
+      {/* Right Sidebar */}
+      {!hideSidebars && (
+        <SidebarProvider defaultOpen={true} className="contents">
+          <RightSidebar />
+        </SidebarProvider>
+      )}
+
+      {/* Features Sidebar */}
+      {currentSection === "features" && (
+        <SidebarProvider defaultOpen={true} className="contents">
+          <FeaturesSidebar />
+        </SidebarProvider>
+      )}
     </div>
   );
 }

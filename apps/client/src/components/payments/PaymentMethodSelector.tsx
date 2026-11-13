@@ -44,7 +44,7 @@ function MethodButton({
     <button
       type="button"
       onClick={onClick}
-      className={`border rounded-lg p-3 flex items-center justify-center gap-2 transition
+      className={`border rounded-lg md:p-3 p-2 flex items-center justify-center gap-2 transition
         ${
           active
             ? "border-gray-800 dark:bg-gray-600 bg-primary text-secondary"
@@ -52,7 +52,7 @@ function MethodButton({
         }`}
     >
       <img src={image} alt={label} className="h-5" />
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-sm font-medium md:inline hidden">{label}</span>
     </button>
   );
 }

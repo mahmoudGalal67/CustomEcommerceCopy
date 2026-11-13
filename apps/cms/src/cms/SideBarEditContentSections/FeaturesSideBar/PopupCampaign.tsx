@@ -112,7 +112,7 @@ export default function () {
   };
 
   return (
-    <div className="max-w-2xl p-2">
+    <div className=" max-w-2xl p-2">
       <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl">
         {/* Header */}
         <div className="border-b px-2 py-6">
@@ -122,7 +122,7 @@ export default function () {
           </p>
 
           {/* Enable */}
-          <div className="flex items-center justify-between rounded-2xl border p-5 my-5">
+          <div className="flex md:flex-row flex-col gap-3 md:justify-between justify-center items-center md:gap-1 rounded-2xl border p-5 my-5">
             <div>
               <h3 className="font-semibold">Enable Popup</h3>
 
@@ -133,7 +133,7 @@ export default function () {
 
             <button
               className={`
-            relative h-8 w-14
+            relative h-8 w-14 mx-auto
             rounded-full transition-all duration-300 ${formData?.enabled ? "bg-emerald-500" : "bg-slate-300"} cursor-pointer`}
               onClick={handleToggle}
             >

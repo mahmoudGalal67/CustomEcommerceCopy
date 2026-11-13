@@ -93,7 +93,7 @@ const StripePayment = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto bg-white dark:bg-gray-600 p-6 rounded-2xl shadow"
+      className="max-w-md mx-auto bg-white dark:bg-gray-600 md:p-6 p-3 rounded-2xl shadow"
     >
       <h2 className="text-lg font-semibold mb-4">Card information</h2>
 

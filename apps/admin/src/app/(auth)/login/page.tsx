@@ -66,7 +66,7 @@ function Login() {
       <div className="sm:mx-auto sm:w-full sm:max-w-sm  ">
         <Link href="/" className="flex items-center justify-center gap-4">
           <img
-            src="/admin/layout.png"
+            src="/layout.png"
             alt="GalalStore"
             width={36}
             height={36}

@@ -52,7 +52,7 @@ export default function Hero2({
       : `${apiUrl}${miniProduct.image ?? ""}`;
 
   return (
-    <section className=" relative  overflow-hidden pt-28 sm:pt-32">
+    <section className=" relative  overflow-hidden pt-5 sm:pt-32">
       <div className="relative mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
         <div className="relative grid items-center gap-12 lg:grid-cols-2">
           <div className="hero-constellation pointer-events-none absolute inset-0" />

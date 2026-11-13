@@ -10,7 +10,7 @@ export default function PaymentOption({
   return (
     <button
       onClick={onClick}
-      className={`rounded-lg border px-3 py-2 text-sm font-medium dark:bg-gray-800 
+      className={`rounded-lg border md:px-3 md:py-2 p-2 md:text-sm text-[10px] font-medium dark:bg-gray-800 
         transition
         ${
           active

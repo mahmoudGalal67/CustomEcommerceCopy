@@ -138,7 +138,7 @@ export default function GeneralCountdownOffers({
       id="sale"
       dir={locale === "ar" ? "rtl" : "ltr"}
       lang={lang}
-      className="mx-auto px-4 py-8 sm:px-6 lg:px-8"
+      className="mx-auto sm:px-6 lg:px-8 my-6"
     >
       <div
         className={`${locale == "ar" ? "from-primary/10 via-zinc-900 to-zinc-900" : "from-zinc-900 via-zinc-900 to-primary/10"}relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-tl  p-8 sm:p-12 lg:p-16`}

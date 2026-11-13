@@ -124,3 +124,77 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Calendar responsive layout */
+.calendar-wrapper {
+  min-width: 0;
+}
+
+.calendar-wrapper .fc {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Toolbar */
+.calendar-wrapper .fc .fc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.calendar-wrapper .fc .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.calendar-wrapper .fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Buttons */
+.calendar-wrapper .fc .fc-button {
+  text-transform: capitalize;
+  font-size: 0.875rem;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .calendar-wrapper .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .calendar-wrapper .fc .fc-toolbar-chunk {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .calendar-wrapper .fc .fc-toolbar-title {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .calendar-wrapper .fc .fc-button {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.75rem;
+  }
+
+  .calendar-wrapper .fc .fc-toolbar-chunk:last-child {
+    flex-wrap: wrap;
+  }
+
+  .calendar-wrapper .fc .fc-col-header-cell-cushion {
+    padding: 6px 2px;
+    font-size: 0.7rem;
+  }
+
+  .calendar-wrapper .fc .fc-daygrid-day-number {
+    padding: 4px;
+    font-size: 0.75rem;
+  }
+}

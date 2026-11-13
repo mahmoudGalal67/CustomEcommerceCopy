@@ -4,7 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { UploadCloud, Trash2 } from "lucide-react";
-import { useGetSettingsQuery, useUpdateSettingsMutation } from "@/services/Settings";
+import {
+  useGetSettingsQuery,
+  useUpdateSettingsMutation,
+} from "@/services/Settings";
 
 interface Social {
   name: string;
@@ -44,7 +47,7 @@ const ImageUpload = React.memo(({ value, onChange }: any) => {
   }, [previewUrl, value]);
 
   return (
-    <label className="border-2 w-[200px] h-[200px] border-dashed rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition relative overflow-hidden">
+    <label className="border-2 w-[200px] h-[200px] border-dashed rounded-2xl md:p-6 p-2 flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition relative overflow-hidden">
       {previewUrl ? (
         <img
           src={previewUrl}
@@ -137,13 +140,16 @@ export default function SettingsPage() {
     }));
   }, []);
 
-  const handleSocialChange = useCallback((index: number, field: string, value: any) => {
-    setSettings((prev) => {
-      const updated = [...prev.socials];
-      updated[index] = { ...updated[index], [field]: value };
-      return { ...prev, socials: updated };
-    });
-  }, []);
+  const handleSocialChange = useCallback(
+    (index: number, field: string, value: any) => {
+      setSettings((prev) => {
+        const updated = [...prev.socials];
+        updated[index] = { ...updated[index], [field]: value };
+        return { ...prev, socials: updated };
+      });
+    },
+    [],
+  );
 
   const addSocial = useCallback(() => {
     setSettings((prev) => ({

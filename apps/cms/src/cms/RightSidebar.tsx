@@ -43,8 +43,10 @@ export default function RightSidebar() {
 
   if (!selectedSection) {
     return (
-      <aside className="md:w-72 w-0 bg-gray-100 p-4">
-        <p className="text-gray-500">Select a section</p>
+      <aside className="md:w-72 w-8 bg-gray-100 flex items-center justify-center">
+        <p className="text-gray-500 text-md tracking-widest [writing-mode:vertical-lr] md:[writing-mode:horizontal-tb]">
+          Select a section
+        </p>
       </aside>
     );
   }

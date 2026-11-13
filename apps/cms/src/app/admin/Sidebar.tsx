@@ -13,7 +13,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
 import CollapsibleMenu from "@/components/CollapsibleMenu";
 import { useCMS } from "@/cms/store";
 import { Link } from "react-router-dom";

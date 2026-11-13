@@ -174,7 +174,7 @@ const CartPage = () => {
             cartItems?.items.map((item: any) => (
               // SINGLE CART ITEM
               <div
-                className={`relative flex items-center justify-between rounded-xl border p-3 transition-all ${(() => {
+                className={`relative flex items-center gap-2 justify-between rounded-xl border p-3 transition-all ${(() => {
                   const stock = Number(
                     item.variant?.stock ?? item.product?.stock ?? 0,
                   );
@@ -194,7 +194,7 @@ const CartPage = () => {
                 {/* IMAGE AND DETAILS */}
                 <div className="flex gap-8">
                   {/* IMAGE */}
-                  <div className="relative w-32 h-32 bg-gray-50 rounded-lg overflow-hidden">
+                  <div className="relative md:w-32 w-24 h-32 bg-gray-50 rounded-lg overflow-hidden">
                     <Image
                       src={
                         item.variant

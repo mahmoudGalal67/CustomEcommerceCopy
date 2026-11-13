@@ -70,7 +70,7 @@ export default function AnnouncementBarSettings() {
       <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         {" "}
         {/* Header */}{" "}
-        <div className="flex items-center justify-between border-b border-slate-100 px-2 py-5">
+        <div className="flex md:flex-row flex-col gap-3 md:gap-1 items-center md:justify-between justify-center border-b border-slate-100 px-2 py-5">
           {" "}
           <div>
             {" "}
@@ -88,7 +88,7 @@ export default function AnnouncementBarSettings() {
             type="button"
             onClick={handleToggle}
             disabled={isSaving}
-            className={`relative h-8 w-14 cursor-pointer rounded-full transition-all duration-300 ${formData.enabled ? "bg-emerald-500" : "bg-slate-300"} ${isSaving ? "cursor-not-allowed opacity-70" : ""}`}
+            className={`relative mx-auto h-8 w-14 cursor-pointer rounded-full transition-all duration-300 ${formData.enabled ? "bg-emerald-500" : "bg-slate-300"} ${isSaving ? "cursor-not-allowed opacity-70" : ""}`}
           >
             {" "}
             <span
