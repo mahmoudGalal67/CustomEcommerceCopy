@@ -41,7 +41,7 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /workspace/apps/admin/public ./public
+COPY --from=builder /workspace/apps/admin/public ./apps/admin/public
 
 COPY --from=builder --chown=nextjs:nodejs \
     /workspace/apps/admin/.next/standalone ./
